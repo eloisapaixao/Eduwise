@@ -1,8 +1,6 @@
 package entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -13,5 +11,10 @@ public class Content {
     private Integer id;
     private String name;
     private Double nota;
-    private List<Hability> habilities;
+
+    @OneToMany(mappedBy = "content")
+    private List<Skill> skills;
+
+    @ManyToOne
+    private Matter matter;
 }

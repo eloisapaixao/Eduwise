@@ -2,15 +2,16 @@ package entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import java.util.List;
-
-@Table(name = "material")
-@Entity(name = "material")
-public class Material {
+@Table(name = "hability")
+@Entity(name = "hability")
+public class Skill {
     @Id
     private Integer id;
     private String name;
-    private List<Content> contents;
+
+    @ManyToOne
+    private Content content;
 }

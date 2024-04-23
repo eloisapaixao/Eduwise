@@ -1,8 +1,7 @@
 package entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -10,8 +9,15 @@ import java.util.List;
 @Entity(name = "class")
 public class Class {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private int serie;
-    private List<Student> students;
+
+    @OneToMany(mappedBy = "classe")
+    private Student students;
+
+    @ManyToMany(mappedBy = "classes")
+    @JsonIgnoreProperties("classes")
+    private List<Professor> professores;
 }

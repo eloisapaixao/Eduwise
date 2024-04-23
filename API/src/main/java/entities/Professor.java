@@ -1,8 +1,7 @@
 package entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -14,5 +13,8 @@ public class Professor {
     private String username;
     private String password;
     private String school;
+    @ManyToMany
+    @JoinTable(name = "Professor_Class", joinColumns = @JoinColumn(name = "Class_id"), inverseJoinColumns = @JoinColumn(name = "Professor_id"))
+    @JsonIgnoreProperties("professores")
     private List<Class> classes;
 }

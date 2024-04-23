@@ -1,7 +1,7 @@
 package repositories;
 
-import entities.Hability;
+import entities.Skill;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface HabilityRepository extends JpaRepository<Hability, Integer> {
+public interface HabilityRepository extends JpaRepository<Skill, Integer> {
 }
