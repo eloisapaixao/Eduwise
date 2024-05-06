@@ -7,7 +7,7 @@ import repositories.StudentRepository;
 
 import java.util.List;
 
-@RequestMapping("students")
+@RequestMapping(value = "/students")
 @RestController
 public class StudentController {
     @Autowired
