@@ -7,7 +7,26 @@ import repositories.StudentRepository;
 
 import java.util.List;
 
-@RequestMapping("")
+@RequestMapping(value = "/contents")
 @RestController
 public class ContentController {
+    @Autowired
+    private StudentRepository studentRepository;
+
+    @GetMapping
+    public List<Student> getAll() {
+        return studentRepository.findAll();
+    }
+
+    @GetMapping(value="/{id}")
+    public Student findAll(@PathVariable Integer id)
+    {
+        return this.studentRepository.findById(id).get();
+    }
+
+    @PostMapping
+    public Student insert (@RequestBody Student student)
+    {
+        return this.studentRepository.save(student);
+    }
 }
