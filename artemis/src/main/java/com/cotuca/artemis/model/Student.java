@@ -1,10 +1,10 @@
 package com.cotuca.artemis.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -24,16 +24,15 @@ public class Student {
     private String name;
 
     @Column(nullable = false)
-    private Date birthday;
+    private LocalDate birthday;
 
     @Column(nullable = false, length = 50)
     private String email;
 
-    @ManyToOne
-    @JsonIgnoreProperties("students")
-    private Classroom classe;
+    @OneToOne
+    @JoinColumn(name = "classroomId")
+    private Classroom classroom;
 
     @OneToMany(mappedBy = "student")
-    @JsonIgnoreProperties("student")
-    private List<Matter> matters;
+    private List<StudentSubject> subjects;
 }

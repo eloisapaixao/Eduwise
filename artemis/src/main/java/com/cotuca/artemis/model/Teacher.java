@@ -1,6 +1,5 @@
 package com.cotuca.artemis.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,14 +24,12 @@ public class Teacher {
     @Column(nullable = false, length = 50)
     private String username;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 50)
     private String password;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 50)
     private String school;
 
-    @ManyToMany
-    @JoinTable(name = "Teacher_Classroom", joinColumns = @JoinColumn(name = "Teacher_id"), inverseJoinColumns = @JoinColumn(name = "Classroom_id"))
-    @JsonIgnoreProperties("teachers")
-    private List<Classroom> classes;
+    @OneToMany(mappedBy = "teacher")
+    private List<TeacherClassroom> classrooms;
 }

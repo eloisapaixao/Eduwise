@@ -1,6 +1,5 @@
 package com.cotuca.artemis.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +14,7 @@ import java.util.List;
 @ToString
 @EqualsAndHashCode
 public class Classroom {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -23,13 +23,8 @@ public class Classroom {
     private String name;
 
     @Column(nullable = false)
-    private Integer serie;
+    private Integer level;
 
-    @OneToMany(mappedBy = "classe")
-    @JsonIgnoreProperties("classe")
-    private List<Student> students;
-
-    @ManyToMany(mappedBy = "classes")
-    @JsonIgnoreProperties("classes")
-    private List<Teacher> teachers;
+    @OneToMany(mappedBy = "classroom")
+    List<TeacherClassroom> teachers;
 }
