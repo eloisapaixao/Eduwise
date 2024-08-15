@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -21,4 +20,6 @@ public class TeacherClassroom {
     @ManyToOne
     @JoinColumn(name = "classroomId")
     private Classroom classroom;
+
+    private String someField;
 }

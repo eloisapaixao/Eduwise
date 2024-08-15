@@ -3,11 +3,11 @@ package com.cotuca.artemis.controller;
 import com.cotuca.artemis.model.Student;
 import com.cotuca.artemis.repositories.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("students")
 @RestController
@@ -17,4 +17,37 @@ public class StudentController {
 
     @GetMapping
     public List<Student> getAll(){return repository.findAll();}
+
+    @GetMapping("/{id}")
+    public Optional<Student> getStudentById(@PathVariable Integer id){
+        return repository.findById(id);
+    }
+
+    @PostMapping
+    public Student createStudent(@RequestBody Student student){
+        return repository.save(student);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteStudent(@PathVariable Integer id){
+        repository.deleteById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Student> updateStudent(@PathVariable Integer id, @RequestBody Student updatedStudent){
+        Optional<Student> optionalStudent = repository.findById(id);
+        if(optionalStudent.isPresent()){
+            Student existingStudent = optionalStudent.get();
+
+            existingStudent.setName(updatedStudent.getName());
+            existingStudent.setEmail(updatedStudent.getEmail());
+            existingStudent.setBirthday(updatedStudent.getBirthday());
+            existingStudent.setClassroom(updatedStudent.getClassroom());
+
+            Student savedStudent = repository.save(existingStudent);
+            return ResponseEntity.ok(savedStudent);
+        } else{
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

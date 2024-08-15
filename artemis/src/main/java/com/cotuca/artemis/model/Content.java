@@ -20,8 +20,8 @@ public class Content {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @OneToMany(mappedBy = "content")
-    private List<ContentSkill> skills;
+    @Column
+    private Integer level;
 
     @OneToOne
     @JoinColumn(name = "subjectId")
