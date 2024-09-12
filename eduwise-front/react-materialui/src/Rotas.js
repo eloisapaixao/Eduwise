@@ -3,6 +3,7 @@ import { Routes, Route, Router } from "react-router-dom";
 import { Inicio } from './Pages/Inicio.js'
 import Turmas from './Pages/Turmas.js'
 import { Alunos } from './Pages/Alunos.js'
+import { Login } from "./Pages/Login.js";
 
 export default function Rotas() {
    return(
@@ -10,6 +11,7 @@ export default function Rotas() {
             <Route exact path='/' element = {<Inicio/>} />
             <Route exact path='/turmas' element = {<Turmas/>} />
             <Route exact path='/alunos' element = {<Alunos/>} />
+            <Route exact path='/login' element = {<Login/>} />
        </Routes>
    )
 }
