@@ -11,14 +11,15 @@ import lombok.*;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class ContentSkill {
+public class Subcontent {
     @Id
-    @ManyToOne
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false, length = 500)
+    private String name;
+
+    @OneToOne
     @JoinColumn(name = "contentId")
     private Content content;
-
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "skillId")
-    private Skill skill;
 }

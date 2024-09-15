@@ -4,6 +4,7 @@ import com.cotuca.artemis.model.Classroom;
 import com.cotuca.artemis.repositories.ClassroomRepository;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,5 +32,21 @@ public class ClassroomController {
     @DeleteMapping("/{id}")
     public void deleteClassroom(@PathVariable Integer id){
         repository.deleteById(id);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Classroom> updateClassroom(@PathVariable Integer id, @RequestBody Classroom updatedClassroom){
+        Optional<Classroom> optionalClassroom = repository.findById(id);
+        if (optionalClassroom.isPresent()){
+            Classroom existingClassroom = optionalClassroom.get();
+
+            existingClassroom.setName(updatedClassroom.getName());
+            existingClassroom.setLevel(updatedClassroom.getLevel());
+
+            Classroom savedClassroom = repository.save(existingClassroom);
+            return ResponseEntity.ok(savedClassroom);
+        }else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

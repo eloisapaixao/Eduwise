@@ -20,4 +20,6 @@ public class TeacherClassroom {
     @ManyToOne
     @JoinColumn(name = "classroomId")
     private Classroom classroom;
+
+    private String someField;
 }

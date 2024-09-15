@@ -3,6 +3,7 @@ package com.cotuca.artemis.controller;
 import com.cotuca.artemis.model.Teacher;
 import com.cotuca.artemis.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,4 +35,23 @@ public class TeacherController {
     public void deleteTeacher(@PathVariable Integer id){
         repository.deleteById(id);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Teacher> updateTeacher(@PathVariable Integer id, @RequestBody Teacher updatedTeacher) {
+        Optional<Teacher> optionalTeacher = repository.findById(id);
+        if (optionalTeacher.isPresent()) {
+            Teacher existingTeacher = optionalTeacher.get();
+
+            existingTeacher.setEmail(updatedTeacher.getEmail());
+            existingTeacher.setUsername(updatedTeacher.getUsername());
+            existingTeacher.setPassword(updatedTeacher.getPassword());
+            existingTeacher.setSchool(updatedTeacher.getSchool());
+
+            Teacher savedTeacher = repository.save(existingTeacher);
+            return ResponseEntity.ok(savedTeacher);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

@@ -13,9 +13,12 @@ import lombok.*;
 @EqualsAndHashCode
 public class Skill {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private String id;
 
     @Column(nullable = false, length = 500)
     private String name;
+
+    @OneToOne
+    @JoinColumn(name = "subcontentId")
+    private Subcontent subcontent;
 }
