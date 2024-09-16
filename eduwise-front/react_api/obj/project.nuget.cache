@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "dgSpecHash": "ydeFjM76tnng6XgBMw0LdMayid3gLPJduEEqCQtUPbUL/fyVvqcJe4xkUN1zc41C2XBzBnsyeJ5wwbhYXEOKzA==",
+  "success": true,
+  "projectFilePath": "/Users/u22127/Documents/GitHub/Eduwise/eduwise-front/react_api/react_api.csproj",
+  "expectedPackageFiles": [
+    "/Users/u22127/.nuget/packages/microsoft.aspnetcore.openapi/8.0.1/microsoft.aspnetcore.openapi.8.0.1.nupkg.sha512",
+    "/Users/u22127/.nuget/packages/microsoft.extensions.apidescription.server/6.0.5/microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "/Users/u22127/.nuget/packages/microsoft.openapi/1.4.3/microsoft.openapi.1.4.3.nupkg.sha512",
+    "/Users/u22127/.nuget/packages/swashbuckle.aspnetcore/6.4.0/swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "/Users/u22127/.nuget/packages/swashbuckle.aspnetcore.swagger/6.4.0/swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "/Users/u22127/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.4.0/swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "/Users/u22127/.nuget/packages/swashbuckle.aspnetcore.swaggerui/6.4.0/swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
