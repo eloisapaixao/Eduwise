@@ -15,8 +15,6 @@ public class SubjectController {
     @Autowired
     private SubjectRepository repository;
 
-
-
     @GetMapping
     public List<Subject> getAll(){return repository.findAll();}
 

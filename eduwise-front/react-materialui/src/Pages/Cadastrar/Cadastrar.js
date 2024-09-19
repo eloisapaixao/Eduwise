@@ -1,4 +1,5 @@
-import * as React from 'react'
+import React, { useState } from 'react'
+import axios from 'axios'
 import LOGIN_IMAGE from '/Users/u22127/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/Prototyping process-rafiki.png'
 import LOGO_IMAGE from '/Users/u22127/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/logo.png'
 import './Cadastrar.css'
@@ -6,8 +7,41 @@ import { Container, Box, TextField, Button, Typography} from '@mui/material'
 import Stack from '@mui/material/Stack'
 import ButtonGroup from '@mui/material/ButtonGroup'
 import { Checkbox, FormControlLabel } from '@mui/material'
+import { useNavigate } from 'react-router-dom'
 
 export function Cadastrar() {
+
+    const [nome, setNome] = useState('')
+    const [email, setEmail] = useState('')
+    const [senha, setSenha] = useState('')
+    const [escola, setEscola] = useState('')
+
+    const navigate = useNavigate()
+
+    const registrar = () => {
+        axios.post('http://localhost:8080/teachers', {
+            email: email,
+            password: senha,
+            school: escola,
+            username: nome
+        }, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(function (response) {
+            console.log(response)
+            navigate("/")
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
+    }
+
+    const logar = () =>{
+        navigate("/login")
+    }
+
     return(
         <div className="pagina-login">
             <div className='espaco-imagem-login'>
@@ -28,7 +62,7 @@ export function Cadastrar() {
                     display="flex" 
                     flexDirection="column" 
                 >
-                    <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#65469B', mt: 15}}>
+                    <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#65469B', mt: 10}}>
                         CRIAR UMA CONTA
                     </Typography>
                     <Typography variant="body1" align="center" gutterBottom sx={{ color: '#848484'}}>
@@ -44,6 +78,8 @@ export function Cadastrar() {
                             margin="normal"
                             required
                             sx={{ backgroundColor: '#fff'}}
+                            value={nome}
+                            onChange={(e) => setNome(e.target.value)}
                         />
                         <TextField 
                             id="standard-basic" 
@@ -53,6 +89,8 @@ export function Cadastrar() {
                             margin="normal"
                             required
                             sx={{ backgroundColor: '#fff', color: '#65469B', mt: 5 }}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField 
                             id="standard-basic" 
@@ -62,11 +100,24 @@ export function Cadastrar() {
                             margin="normal"
                             required
                             sx={{ backgroundColor: '#fff', color: '#65469B', mt: 5 }}
+                            value={senha}
+                            onChange={(e) => setSenha(e.target.value)}
+                        />
+                        <TextField 
+                            id="standard-basic" 
+                            label="Escola em que trabalha" 
+                            variant="standard" 
+                            fullWidth
+                            margin="normal"
+                            required
+                            sx={{ backgroundColor: '#fff', color: '#65469B', mt: 5 }}
+                            value={escola}
+                            onChange={(e) => setEscola(e.target.value)}
                         />
 
                         <Stack spacing={2} direction="row" sx={{mt: 5}}>
-                            <Button variant="contained" sx={{ fontWeight: 'bold', backgroundColor: '#65469B', color: '#fff',  mt: 15, width: 300}}>REGISTRAR</Button>
-                            <Button variant="outlined" sx={{ fontWeight: 'bold', color: '#65469B', mt: 15, width: 300, borderColor: '#65469B'}}>LOGAR</Button>
+                            <Button variant="contained" sx={{ fontWeight: 'bold', backgroundColor: '#65469B', color: '#fff',  mt: 15, width: 300}} onClick={registrar}>REGISTRAR</Button>
+                            <Button variant="outlined" sx={{ fontWeight: 'bold', color: '#65469B', mt: 15, width: 300, borderColor: '#65469B'}} onClick={logar}>LOGAR</Button>
                         </Stack>
                         <FormControlLabel
                             control={<Checkbox color="secondary" />}
@@ -74,7 +125,7 @@ export function Cadastrar() {
                             sx={{mt: 2}}
                         />
                     </Box>
-                    <ButtonGroup variant="text" aria-label="text button group" align="left" color="secondary #65469B" sx={{mt: 20}}>
+                    <ButtonGroup variant="text" aria-label="text button group" align="left" color="secondary #65469B" sx={{mt: 12}}>
                         <Button sx={{color: '#65469B'}} >Facebook</Button>
                         <Button sx={{color: '#65469B'}}>Linkedin</Button>
                         <Button sx={{color: '#65469B'}}>Google</Button>

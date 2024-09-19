@@ -1,12 +1,47 @@
-import * as React from 'react';
+import React, { useState } from 'react'
+import axios from 'axios'
 import LOGIN_IMAGE from '/Users/u22127/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/Prototyping process-rafiki.png'
 import LOGO_IMAGE from '/Users/u22127/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/logo.png'
 import './Login.css'
-import { Container, Box, TextField, Button, Typography} from '@mui/material';
-import Stack from '@mui/material/Stack';
-import ButtonGroup from '@mui/material/ButtonGroup';
+import { Container, Box, TextField, Button, Typography} from '@mui/material'
+import Stack from '@mui/material/Stack'
+import ButtonGroup from '@mui/material/ButtonGroup'
+import { useNavigate } from 'react-router-dom'
+import { Snackbar, Alert } from '@mui/material'
 
 export function Login() {
+
+    const [email, setEmail] = useState('')
+    const [senha, setSenha] = useState('')
+
+    const navigate = useNavigate()
+
+    const [openSnackbar, setOpenSnackbar] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+
+
+    const cadastrar = () =>{
+        navigate("/cadastrar")
+    }
+
+    const logar = () => {
+        axios.get('http://localhost:8080/teachers')
+        .then(function (response) {
+            response.data.forEach(
+                item => {
+                    if (email === item.email && senha === item.password)
+                        navigate("/")
+                    else
+                        setErrorMessage('Senha ou Usuário errado! Tente novamente.');  // Mensagem personalizada
+                        setOpenSnackbar(true)
+                }
+            )
+        })
+        .catch(function (error) {
+            console.log(error)
+        })
+    }
+
     return(
         <div className="pagina-login">
             <div className='espaco-imagem-login'>
@@ -43,6 +78,8 @@ export function Login() {
                             margin="normal"
                             required
                             sx={{ backgroundColor: '#fff'}}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                         <TextField 
                             id="standard-basic" 
@@ -52,6 +89,8 @@ export function Login() {
                             margin="normal"
                             required
                             sx={{ backgroundColor: '#fff', color: '#65469B', mt: 5 }}
+                            value={senha}
+                            onChange={(e) => setSenha(e.target.value)}
                         />
 
                         <Typography variant="body2" align="left" sx={{ mt: 5, color: '#7a7a7a' }}>
@@ -59,8 +98,8 @@ export function Login() {
                         </Typography>
 
                         <Stack spacing={2} direction="row" sx={{mt: 5}}>
-                            <Button variant="contained" sx={{ fontWeight: 'bold', backgroundColor: '#65469B', color: '#fff',  mt: 15, width: 300}}>LOGAR</Button>
-                            <Button variant="outlined" sx={{ fontWeight: 'bold', color: '#65469B', mt: 15, width: 300, borderColor: '#65469B'}}>REGISTRAR</Button>
+                            <Button variant="contained" sx={{ fontWeight: 'bold', backgroundColor: '#65469B', color: '#fff',  mt: 15, width: 300}} onClick={logar}>LOGAR</Button>
+                            <Button variant="outlined" sx={{ fontWeight: 'bold', color: '#65469B', mt: 15, width: 300, borderColor: '#65469B'}} onClick={cadastrar}>REGISTRAR</Button>
                         </Stack>
 
                     </Box>
@@ -71,6 +110,16 @@ export function Login() {
                     </ButtonGroup>
                 </Box>
             </Container>
+            <Snackbar 
+                open={openSnackbar} 
+                autoHideDuration={6000} 
+                onClose={() => setOpenSnackbar(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={() => setOpenSnackbar(false)} severity="error" sx={{ width: '100%' }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

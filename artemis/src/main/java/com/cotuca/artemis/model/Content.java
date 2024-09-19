@@ -23,7 +23,7 @@ public class Content {
     @Column
     private Integer level;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "subjectId")
     private Subject subject;
 }

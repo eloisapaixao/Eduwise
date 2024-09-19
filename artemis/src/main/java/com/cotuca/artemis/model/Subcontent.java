@@ -19,7 +19,7 @@ public class Subcontent {
     @Column(nullable = false, length = 500)
     private String name;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "contentId")
     private Content content;
 }

@@ -18,7 +18,7 @@ public class Skill {
     @Column(nullable = false, length = 500)
     private String name;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "subcontentId")
     private Subcontent subcontent;
 }
