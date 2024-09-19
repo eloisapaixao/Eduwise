@@ -2,7 +2,7 @@ import React from 'react';
 import Rotas from './Rotas';
 
 
-import { BrowserRouter, Route, Router } from 'react-router-dom';
+import { BrowserRouter} from 'react-router-dom';
 
 
 function App() {

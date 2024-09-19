@@ -29,11 +29,14 @@ export function Login() {
         .then(function (response) {
             response.data.forEach(
                 item => {
-                    if (email === item.email && senha === item.password)
-                        navigate("/")
-                    else
+                    if (email === item.email && senha === item.password) {
+                        navigate("/turmas")
+                        localStorage.setItem("email", item.email)
+                    }
+                    else {
                         setErrorMessage('Senha ou Usuário errado! Tente novamente.');  // Mensagem personalizada
                         setOpenSnackbar(true)
+                    }
                 }
             )
         })
