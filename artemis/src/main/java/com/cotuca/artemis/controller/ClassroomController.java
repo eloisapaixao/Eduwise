@@ -1,8 +1,10 @@
 package com.cotuca.artemis.controller;
 
 import com.cotuca.artemis.model.Classroom;
+import com.cotuca.artemis.model.ClassroomData;
+import com.cotuca.artemis.model.Teacher;
 import com.cotuca.artemis.repositories.ClassroomRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import com.cotuca.artemis.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,18 +17,28 @@ import java.util.Optional;
 public class ClassroomController {
     @Autowired
     private ClassroomRepository repository;
+    @Autowired
+    private TeacherRepository repositoryTeacher;
 
     @GetMapping
-    public List<Classroom> getAll(){return repository.findAll();}
+    public List<Classroom> getAll() {return repository.findAll();}
 
     @GetMapping("/{id}")
     public Optional<Classroom> getClassroomById(@PathVariable Integer id){
         return repository.findById(id);
     }
 
+    @GetMapping("/prof/{id}")
+    public List<Classroom> getAllByTeacherId(@PathVariable Integer idProfessor) {
+        return repository.getClassroomByTeacherId(idProfessor);
+    }
+
     @PostMapping
-    public Classroom createClassroom(@RequestBody Classroom classroom){
-        return repository.save(classroom);
+    public Classroom createClassroom(@RequestBody ClassroomData classroom){
+        System.out.println(classroom.teacher());
+        Teacher teacher = repositoryTeacher.findById(classroom.teacher()).orElse(null);
+        Classroom sala = new Classroom(0, classroom.name(), classroom.level(), teacher);
+        return repository.save(sala);
     }
 
     @DeleteMapping("/{id}")

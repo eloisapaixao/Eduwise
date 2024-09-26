@@ -26,6 +26,11 @@ public class TeacherController {
         return repository.findById(id);
     }
 
+    @GetMapping("/getByEmail/{email}")
+    public Optional<Teacher> getTeacherByEmail(@PathVariable String email){
+        return repository.findByEmail(email);
+    }
+
     @PostMapping
     public Teacher createTeacher(@RequestBody Teacher teacher){
         return repository.save(teacher);

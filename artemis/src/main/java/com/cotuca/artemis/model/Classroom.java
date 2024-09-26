@@ -25,6 +25,7 @@ public class Classroom {
     @Column(nullable = false)
     private Integer level;
 
-    @OneToMany(mappedBy = "classroom")
-    List<TeacherClassroom> teachers;
+    @ManyToOne
+    @JoinColumn(name = "teacher_id")
+    private Teacher teacher;
 }

@@ -31,5 +31,5 @@ public class Teacher {
     private String school;
 
     @OneToMany(mappedBy = "teacher")
-    private List<TeacherClassroom> classrooms;
+    private List<Classroom> classrooms;
 }
