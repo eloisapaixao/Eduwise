@@ -9,7 +9,7 @@ import ButtonGroup from '@mui/material/ButtonGroup'
 import { useNavigate } from 'react-router-dom'
 import { Snackbar, Alert } from '@mui/material'
 
-export function Login() {
+export function Login({ setLoggedInTeacherId }) {
 
     const [email, setEmail] = useState('')
     const [senha, setSenha] = useState('')

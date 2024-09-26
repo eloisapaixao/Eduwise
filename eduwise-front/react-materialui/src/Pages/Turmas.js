@@ -139,26 +139,7 @@ export function Turmas() {
     const handleClosePopover = () => {
         setAnchorEl(null);
     };
-
-    const carregarTurmas = async () => {
-        const emailProfessor = localStorage.getItem("email");
-        let idProfessor;
     
-        try {
-            const responseProfessor = await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor);
-            idProfessor = responseProfessor.data.id;
-
-            const responseTurmas = await axios.get(`http://localhost:8080/classrooms/teacher/${idProfessor}`);
-            setTurmas(responseTurmas.data);
-        } catch (error) {
-            console.error('Erro ao carregar turmas:', error);
-        }
-    };
-
-    useEffect(() => {
-        carregarTurmas();
-    }, []);
-
     const adicionarTurma = async () => {
         const emailProfessor = localStorage.getItem("email")
         let idProfessor
@@ -178,16 +159,16 @@ export function Turmas() {
             color: selectedColor 
         };
         axios.post('http://localhost:8080/classrooms', novaTurma)
-            .then(response => {
-                setTurmas([...turmas, novaTurma]);
-                setNome('');
-                setSerie('');
-                setSelectedColor('#65469B');
-                setDialogOpen(false);
-            })
-            .catch(error => {
-                console.error('Erro ao adicionar turma:', error);
-            });
+        .then(response => {
+            setTurmas([...turmas, novaTurma]);
+            setNome('');
+            setSerie('');
+            setSelectedColor('#65469B');
+            setDialogOpen(false);
+        })
+        .catch(error => {
+            console.error('Erro ao adicionar turma:', error);
+        });
     };
 
     const handleMenu = (event) => {
@@ -415,7 +396,7 @@ export function Turmas() {
                                         gutterBottom
                                         variant="subtitle1"
                                         component="div"
-                                        sx={{ height: 90, color: '#fff' }}
+                                        sx={{ height: 90, color: '#000000' }}
                                     >
                                         {turma.name}
                                     </Typography>
