@@ -139,6 +139,14 @@ export function Turmas() {
     const handleClosePopover = () => {
         setAnchorEl(null);
     };
+
+    const getTurmas = async () => {
+        // Pegar resposta da api (json com as turmas) e exibir na tela
+        await axios.get('https://localhost:8080/classrooms/prof/' + localStorage.getItem("id"))
+        .then(
+
+        )
+    }
     
     const adicionarTurma = async () => {
         const emailProfessor = localStorage.getItem("email")
