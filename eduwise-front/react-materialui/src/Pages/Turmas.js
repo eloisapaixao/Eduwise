@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios'
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -140,23 +140,37 @@ export function Turmas() {
         setAnchorEl(null);
     };
 
-    const adicionarTurma = () => {
+    const carregarTurmas = async () => {
+        const emailProfessor = localStorage.getItem("email");
+        let idProfessor;
+    
+        try {
+            const responseProfessor = await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor);
+            idProfessor = responseProfessor.data.id;
+
+            const responseTurmas = await axios.get(`http://localhost:8080/classrooms/teacher/${idProfessor}`);
+            setTurmas(responseTurmas.data);
+        } catch (error) {
+            console.error('Erro ao carregar turmas:', error);
+        }
+    };
+
+    useEffect(() => {
+        carregarTurmas();
+    }, []);
+
+    const adicionarTurma = async () => {
         const emailProfessor = localStorage.getItem("email")
         let idProfessor
-        axios.get('http://localhost:8080/teachers')
+        /////
+        await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
         .then(function (response) {
-            const professor = response.data.filter((item) => item.email === emailProfessor)[0]
-            if (professor) {
-                idProfessor = professor.id
-                console.log(idProfessor)
-            }
-            else {
-                console.log("Não há professores com este email")
-            }
+            idProfessor = response.data.id
         })
         .catch(function (error) {
             console.log(error)
         })
+        ////
         const novaTurma = { 
             name: nome, 
             level: parseInt(serie),
