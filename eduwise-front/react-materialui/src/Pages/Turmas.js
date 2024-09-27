@@ -39,6 +39,7 @@ import CardContent from '@mui/material/CardContent';
 import CardActionArea from '@mui/material/CardActionArea';
 import FolderOpenIcon from '@mui/icons-material/Folder';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import { useNavigate } from 'react-router-dom'
 
 const drawerWidth = 240;
 
@@ -119,6 +120,10 @@ export function Turmas() {
     const id = openPopover ? 'color-picker-popover' : undefined;
     const [auth, setAuth] = useState(true);
 
+    useEffect(() => {
+        getTurmas(); // Chama a função para carregar as turmas ao montar o componente
+    }, []);
+
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -141,42 +146,58 @@ export function Turmas() {
     };
 
     const getTurmas = async () => {
-        // Pegar resposta da api (json com as turmas) e exibir na tela
-        await axios.get('https://localhost:8080/classrooms/prof/' + localStorage.getItem("id"))
-        .then(
-
-        )
+        const emailProfessor = localStorage.getItem("email")
+        let idProfessor
+        /////
+        await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
+            .then(function (response) {
+                idProfessor = response.data.id
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
+        await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
+            .then(function (response) {
+                setTurmas([...turmas, response.data]);
+                setNome('');
+                setDialogOpen(false);
+            })
+            .catch(function (error) {
+                console.error('Erro ao pegar turma:', error);
+            });
     }
-    
+
     const adicionarTurma = async () => {
         const emailProfessor = localStorage.getItem("email")
         let idProfessor
         /////
         await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
-        .then(function (response) {
-            idProfessor = response.data.id
-        })
-        .catch(function (error) {
-            console.log(error)
-        })
+            .then(function (response) {
+                idProfessor = response.data.id
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
         ////
-        const novaTurma = { 
-            name: nome, 
+        const novaTurma = {
+            name: nome,
             level: parseInt(serie),
             teacher: idProfessor,
-            color: selectedColor 
+            color: selectedColor
         };
         axios.post('http://localhost:8080/classrooms', novaTurma)
-        .then(response => {
-            setTurmas([...turmas, novaTurma]);
-            setNome('');
-            setSerie('');
-            setSelectedColor('#65469B');
-            setDialogOpen(false);
-        })
-        .catch(error => {
-            console.error('Erro ao adicionar turma:', error);
-        });
+            .then(response => {
+                setTurmas([...turmas, novaTurma]);
+                setNome('');
+                setSerie('');
+                setSelectedColor('#65469B');
+                setDialogOpen(false);
+
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('Erro ao adicionar turma:', error);
+            });
     };
 
     const handleMenu = (event) => {
@@ -186,6 +207,13 @@ export function Turmas() {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const navigate = useNavigate()
+
+    const aluno = (id) => {
+        localStorage.setItem("classId", id)
+        navigate("/alunos")
+    }
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -214,10 +242,10 @@ export function Turmas() {
                             <DialogTitle variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#65469B' }}>
                                 CRIE UMA TURMA
                             </DialogTitle>
-                            <Typography variant="body1" gutterBottom sx={{ color: '#848484', mt: -3 }}>
+                            <Typography variant="body1" gutterBottom sx={{ color: '#848484', mt: -1, fontSize: 20 }}>
                                 <b>Dados da turma</b>
                             </Typography>
-                            <Divider color='#848484' sx={{ width: 450, mt: -1 }} />
+                            <Divider color='#848484' sx={{ width: 450, mt: -1, borderBottomWidth: '3px' }} />
                             <TextField
                                 label="Nome da turma"
                                 variant="standard"
@@ -236,10 +264,10 @@ export function Turmas() {
                                 value={serie}
                                 onChange={(e) => setSerie(e.target.value)}
                             />
-                            <Typography variant="body1" gutterBottom sx={{ color: '#848484', mt: 3 }}>
+                            <Typography variant="body1" gutterBottom sx={{ color: '#848484', mt: 2, fontSize: 20}}>
                                 <b>Edição</b>
                             </Typography>
-                            <Divider color='#848484' sx={{ width: 450, mt: -1 }} />
+                            <Divider color='#848484' sx={{ width: 450, mt: -1, borderBottomWidth: '3px'}} />
                             <Button
                                 variant="contained"
                                 onClick={handleClick}
@@ -396,31 +424,35 @@ export function Turmas() {
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                    {turmas.map((turma, index) => (
-                        <Card key={index} sx={{ width: 280, height: 180 }}>
-                            <CardActionArea sx={{ backgroundColor: turma.color }}>
-                                <CardContent>
-                                    <Typography
-                                        gutterBottom
-                                        variant="subtitle1"
-                                        component="div"
-                                        sx={{ height: 90, color: '#000000' }}
-                                    >
-                                        {turma.name}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                            <Divider />
-                            <CardActions>
-                                <IconButton color="inherit">
-                                    <PermContactCalendarIcon />
-                                </IconButton>
-                                <IconButton color="inherit">
-                                    <FolderOpenIcon />
-                                </IconButton>
-                            </CardActions>
-                        </Card>
-                    ))}
+                    {turmas[0] !== undefined && (
+                        turmas[0].map((turma, index) => {
+                            return (
+                                <Card key={index} sx={{ width: 280, height: 180 }} onClick={() => aluno(turma.id)}>
+                                    <CardActionArea sx={{ backgroundColor: turma.color }}>
+                                        <CardContent>
+                                            <Typography
+                                                gutterBottom
+                                                variant="subtitle1"
+                                                component="div"
+                                                sx={{ height: 90, color: '#000000' }}
+                                            >
+                                                {turma.name}
+                                            </Typography>
+                                        </CardContent>
+                                    </CardActionArea>
+                                    <Divider />
+                                    <CardActions>
+                                        <IconButton color="inherit">
+                                            <PermContactCalendarIcon />
+                                        </IconButton>
+                                        <IconButton color="inherit">
+                                            <FolderOpenIcon />
+                                        </IconButton>
+                                    </CardActions>
+                                </Card>
+                            )
+                        })
+                    )}
                 </Box>
             </Box>
         </Box>

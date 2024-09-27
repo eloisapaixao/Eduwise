@@ -1,11 +1,11 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import { Button, Divider } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -20,15 +20,19 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArchiveIcon from '@mui/icons-material/Archive';
-import VideoCallIcon from '@mui/icons-material/VideoCall';
 import AppsIcon from '@mui/icons-material/Apps';
 import SchoolIcon from '@mui/icons-material/School';
 import HomeIcon from '@mui/icons-material/Home';
 import TodayIcon from '@mui/icons-material/Today';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
+import { TextField } from '@mui/material';
+import { Autocomplete } from '@mui/material';
+import { useNavigate } from 'react-router-dom'
 
 const drawerWidth = 240;
 
@@ -100,24 +104,72 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 export function Alunos() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [auth, setAuth] = useState(true);
+  const [nome, setNome] = useState('');
+  const [emailAluno, setEmailAluno] = useState('');
+  const [birthday, setBirthday] = useState('');
+  const [alunos, setAlunos] = useState([]);
+
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    setDrawerOpen(true);
   };
 
   const handleDrawerClose = () => {
-    setOpen(false);
+    setDrawerOpen(false);
   };
 
-  const [auth, setAuth] = React.useState(true);
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
+  const adicionarAluno = async () => {
+    const idClassroom = parseInt(localStorage.getItem("classId"))
+
+    let subjects = []
+    try {
+      const response = await axios.get('http://localhost:8080/subjects')
+      subjects = response.data.map(subject => subject.id)
+    } catch (error) {
+      console.error('Erro ao buscar matérias:', error)
+    }
+
+    const novoAluno = {
+      name: nome,
+      birthday: birthday,
+      email: emailAluno,
+      classroomId: { id: parseInt(idClassroom, 10) },
+      subjects: subjects
+    };
+
+    try {
+      const response = await axios.post('http://localhost:8080/students', novoAluno)
+      console.log('Aluno adicionado com sucesso:', response.data)
+      setAlunos([...alunos, response.data])
+      setDialogOpen(false)
+    } catch (error) {
+      console.error('Erro ao adicionar aluno:', error)
+    }
   };
-  
-  const handleClose = () => {
-    setAnchorEl(null);
+
+  const handleBirthdayChange = (e) => {
+    const value = e.target.value.replace(/\D/g, '')
+    let formattedValue = ''
+
+    if (value.length >= 1) {
+      formattedValue += value.substring(0, 4)
+    }
+    if (value.length >= 5) {
+      formattedValue += '-' + value.substring(4, 6)
+    }
+    if (value.length >= 7) {
+      formattedValue += '-' + value.substring(6, 8)
+    }
+
+    setBirthday(formattedValue);
+  };
+
+  const navigate = useNavigate();
+  const ia = () => {
+    navigate('/ia')
   };
 
   return (
@@ -137,54 +189,75 @@ export function Alunos() {
           >
             <MenuIcon />
           </IconButton>
-    
-          <img src='/images/logo.png' alt='logo /' style={{height:30,}}/>
+
+          <img src='/images/logo.png' alt='logo /' style={{ height: 30, }} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
-          <IconButton color='inherit'> 
-            <VideoCallIcon />
+          <IconButton color='inherit' onClick={() => setDialogOpen(true)}>
+            <PersonAddAlt1Icon />
           </IconButton>
-          <IconButton color='inherit'> 
+          <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+            <DialogContent sx={{ height: 500, width: 500 }}>
+              <DialogTitle variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#65469B' }}>
+                CRIE UM ALUNO
+              </DialogTitle>
+              <Typography variant="body1" gutterBottom sx={{ color: '#848484', mt: -1, fontSize: 20 }}>
+                <b>Dados do aluno</b>
+              </Typography>
+              <Divider color='#848484' sx={{ width: 450, mt: -1, borderBottomWidth: '3px' }} />
+
+              <TextField
+                label="Nome do aluno"
+                variant="standard"
+                margin="normal"
+                required
+                sx={{ backgroundColor: '#fff', width: 400, marginLeft: 3 }}
+                value={nome}
+                onChange={(e) => setNome(e.target.value)}
+              />
+              <TextField
+                label="Email do aluno"
+                variant="standard"
+                margin="normal"
+                required
+                sx={{ backgroundColor: '#fff', width: 400, marginLeft: 3 }}
+                value={emailAluno}
+                onChange={(e) => setEmailAluno(e.target.value)}
+              />
+              <TextField
+                label="Data de Nascimento (ANO-MÊS-DIA)"
+                variant="standard"
+                margin="normal"
+                required
+                sx={{ backgroundColor: '#fff', width: 400, marginLeft: 3 }}
+                value={birthday}
+                onChange={handleBirthdayChange}
+              />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={() => setDialogOpen(false)} sx={{ color: '#65469B' }}>
+                Cancelar
+              </Button>
+              <Button onClick={adicionarAluno} sx={{ color: '#65469B' }}>
+                Criar
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <IconButton color='inherit'>
             <AppsIcon />
           </IconButton>
-          <IconButton color='inherit'> 
-            <MoreVertIcon />
-          </IconButton>
-          <Box
-             m={1}
-          >
-          </Box>
           {auth && (
             <div>
-                <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleMenu}
-                    color="inherit"
-                >
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                color="inherit"
+              >
                 <AccountCircle />
-                </IconButton>
-                <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                    }}
-                    open={Boolean(anchorEl)}
-                    onClose={handleClose}
-                    >
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                </Menu>
+              </IconButton>
             </div>
-                    )}
+          )}
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -236,14 +309,14 @@ export function Alunos() {
                     justifyContent: 'center',
                   }}
                 >
-                  { <SchoolIcon /> }
+                  {<SchoolIcon />}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
-        <Divider/>
+        <Divider />
         <List>
           {['Arquivos', 'Configurações'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
@@ -271,37 +344,31 @@ export function Alunos() {
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <DrawerHeader />
-
-            <Box marginBottom={2}
-                 fontSize={28}> 
-                Alunos da Turma
-            </Box>
+        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#65469B', fontStyle: 'italic' }}>
+          ALUNOS DA TURMA
+        </Typography>
+        <Divider sx={{ mt: -1, borderBottomWidth: '3px', borderColor: '#65469B' }} />
+        <Box>
+          <List
+            sx={{ width: '100%', bgcolor: 'background.paper' }}
+            aria-label="alunos"
+          >
+            {alunos.map((aluno) => (
+              <React.Fragment key={aluno.id}>
+                <ListItem>
+                  <ListItemButton onClick={ia}>
+                    <ListItemText primary={aluno.name} />
+                  </ListItemButton>
+                  <Button>
+                    <DeleteIcon />
+                  </Button>
+                </ListItem>
+                <Divider />
+              </React.Fragment>
+            ))}
             <Divider />
-            <Box>
-              <List
-                sx={{ width: '100%', maxWidth: 550, bgcolor: 'background.paper'}}
-                aria-label="alunos"
-              >
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemText primary="Letícia Fochi Juliani" />
-                  </ListItemButton>
-                  <Button>
-                    <DeleteIcon />
-                  </Button>
-                </ListItem>
-                <Divider />
-                <ListItem disablePadding>
-                  <ListItemButton>
-                    <ListItemText primary="Maria Eduarda de Jesus Padovan" />
-                  </ListItemButton>
-                  <Button>
-                    <DeleteIcon />
-                  </Button>
-                </ListItem>
-                <Divider />
-              </List>
-            </Box>
+          </List>
+        </Box>
 
       </Box>
     </Box>

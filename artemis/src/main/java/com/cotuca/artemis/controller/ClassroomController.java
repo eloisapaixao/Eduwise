@@ -2,6 +2,7 @@ package com.cotuca.artemis.controller;
 
 import com.cotuca.artemis.model.Classroom;
 import com.cotuca.artemis.model.ClassroomData;
+import com.cotuca.artemis.model.ClassroomRequest;
 import com.cotuca.artemis.model.Teacher;
 import com.cotuca.artemis.repositories.ClassroomRepository;
 import com.cotuca.artemis.repositories.TeacherRepository;
@@ -21,16 +22,27 @@ public class ClassroomController {
     private TeacherRepository repositoryTeacher;
 
     @GetMapping
-    public List<Classroom> getAll() {return repository.findAll();}
+    public List<ClassroomRequest> getAll()
+    {
+        List<Classroom> classrooms = this.repository.findAll();
+
+        List<ClassroomRequest> list = classrooms.stream().map(classroom -> new ClassroomRequest(classroom.getId(), classroom.getName())).toList();
+
+        return list;
+    }
 
     @GetMapping("/{id}")
-    public Optional<Classroom> getClassroomById(@PathVariable Integer id){
-        return repository.findById(id);
+    public ClassroomRequest getClassroomById(@PathVariable Integer id){
+        Classroom classroom = repository.findById(id).orElse(null);
+
+        return new ClassroomRequest(classroom.getId(), classroom.getName());
     }
 
     @GetMapping("/prof/{id}")
-    public List<Classroom> getAllByTeacherId(@PathVariable Integer idProfessor) {
-        return repository.getClassroomByTeacherId(idProfessor);
+    public List<ClassroomRequest> getAllByTeacherId(@PathVariable Integer id) {
+        List<Classroom> classrooms = this.repository.getClassroomByTeacherId(id);
+        List<ClassroomRequest> list = classrooms.stream().map(classroom -> new ClassroomRequest(classroom.getId(), classroom.getName())).toList();
+        return list;
     }
 
     @PostMapping
