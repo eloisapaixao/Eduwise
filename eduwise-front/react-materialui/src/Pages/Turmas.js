@@ -264,10 +264,10 @@ export function Turmas() {
                                 value={serie}
                                 onChange={(e) => setSerie(e.target.value)}
                             />
-                            <Typography variant="body1" gutterBottom sx={{ color: '#848484', mt: 2, fontSize: 20}}>
+                            <Typography variant="body1" gutterBottom sx={{ color: '#848484', mt: 2, fontSize: 20 }}>
                                 <b>Edição</b>
                             </Typography>
-                            <Divider color='#848484' sx={{ width: 450, mt: -1, borderBottomWidth: '3px'}} />
+                            <Divider color='#848484' sx={{ width: 450, mt: -1, borderBottomWidth: '3px' }} />
                             <Button
                                 variant="contained"
                                 onClick={handleClick}
@@ -321,7 +321,7 @@ export function Turmas() {
                                 id="menu-appbar"
                                 anchorEl={anchorEl}
                                 anchorOrigin={{
-                                    vertical: 'top',
+                                    vertical: 'bottom',
                                     horizontal: 'right',
                                 }}
                                 keepMounted
@@ -333,7 +333,7 @@ export function Turmas() {
                                 onClose={handleClose}
                             >
                                 <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                <MenuItem onClick={handleClose}>My account</MenuItem>
+                                <MenuItem onClick={handleClose}>Logout</MenuItem>
                             </Menu>
                         </div>
                     )}
