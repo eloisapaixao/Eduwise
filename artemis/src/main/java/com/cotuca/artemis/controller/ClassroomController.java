@@ -49,7 +49,7 @@ public class ClassroomController {
     public Classroom createClassroom(@RequestBody ClassroomData classroom){
         System.out.println(classroom.teacher());
         Teacher teacher = repositoryTeacher.findById(classroom.teacher()).orElse(null);
-        Classroom sala = new Classroom(0, classroom.name(), classroom.level(), teacher);
+        Classroom sala = new Classroom(0, classroom.nome(), classroom.level(), teacher);
         return repository.save(sala);
     }
 

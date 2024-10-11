@@ -31,8 +31,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { TextField, Button, Popover } from '@mui/material';
-import { CirclePicker } from 'react-color';
+import { TextField, Button } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -40,6 +39,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 import FolderOpenIcon from '@mui/icons-material/Folder';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import { useNavigate } from 'react-router-dom'
+import Autocomplete from '@mui/material/Autocomplete';
 
 const drawerWidth = 240;
 
@@ -111,26 +111,19 @@ export function Turmas() {
     const theme = useTheme();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [selectedColor, setSelectedColor] = useState('#65469B');
     const [nome, setNome] = useState('');
     const [serie, setSerie] = useState('');
     const [turmas, setTurmas] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
-    const openPopover = Boolean(anchorEl);
-    const id = openPopover ? 'color-picker-popover' : undefined;
     const [auth, setAuth] = useState(true);
+    const [turmasNomes, setTurmasNomes] = useState([]);
 
     useEffect(() => {
-        getTurmas(); // Chama a função para carregar as turmas ao montar o componente
+        getTurmas();
     }, []);
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
-    };
-
-    const handleColorChange = (color) => {
-        setSelectedColor(color.hex);
-        handleClosePopover();
     };
 
     const handleDrawerOpen = () => {
@@ -160,6 +153,8 @@ export function Turmas() {
             .then(function (response) {
                 setTurmas([...turmas, response.data]);
                 setNome('');
+                const nomes = response.data.map(turma => turma.name);
+                setTurmasNomes(nomes);
                 setDialogOpen(false);
             })
             .catch(function (error) {
@@ -182,15 +177,13 @@ export function Turmas() {
         const novaTurma = {
             name: nome,
             level: parseInt(serie),
-            teacher: idProfessor,
-            color: selectedColor
+            teacher: idProfessor
         };
         axios.post('http://localhost:8080/classrooms', novaTurma)
             .then(response => {
                 setTurmas([...turmas, novaTurma]);
                 setNome('');
                 setSerie('');
-                setSelectedColor('#65469B');
                 setDialogOpen(false);
 
                 window.location.reload();
@@ -214,6 +207,14 @@ export function Turmas() {
         localStorage.setItem("classId", id)
         navigate("/alunos")
     }
+
+    const handleLogout = () => {
+        localStorage.removeItem('email');
+
+        localStorage.removeItem('authToken');
+
+        navigate('/login');
+    };
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -264,34 +265,6 @@ export function Turmas() {
                                 value={serie}
                                 onChange={(e) => setSerie(e.target.value)}
                             />
-                            <Typography variant="body1" gutterBottom sx={{ color: '#848484', mt: 2, fontSize: 20 }}>
-                                <b>Edição</b>
-                            </Typography>
-                            <Divider color='#848484' sx={{ width: 450, mt: -1, borderBottomWidth: '3px' }} />
-                            <Button
-                                variant="contained"
-                                onClick={handleClick}
-                                sx={{ backgroundColor: '#65469B', mt: 3 }}
-                            >
-                                Selecione uma Cor
-                            </Button>
-                            <Popover
-                                id={id}
-                                open={openPopover}
-                                anchorEl={anchorEl}
-                                onClose={handleClosePopover}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'center',
-                                }}
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'center',
-                                }}
-                            >
-                                <Typography sx={{ p: 2 }}>Escolha uma cor:</Typography>
-                                <CirclePicker color={selectedColor} onChange={handleColorChange} />
-                            </Popover>
                         </DialogContent>
                         <DialogActions>
                             <Button onClick={() => setDialogOpen(false)} sx={{ color: '#65469B' }}>
@@ -333,7 +306,7 @@ export function Turmas() {
                                 onClose={handleClose}
                             >
                                 <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                                <MenuItem onClick={handleLogout}>Logout</MenuItem>
                             </Menu>
                         </div>
                     )}
@@ -388,7 +361,14 @@ export function Turmas() {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    <SchoolIcon />
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={turmasNomes}
+                                        sx={{ width: 30 }}
+                                        renderInput={(params) => <SchoolIcon />}
+                                        inputRef={input => input && input.focus()}
+                                    />
                                 </ListItemIcon>
                                 <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
                             </ListItemButton>
