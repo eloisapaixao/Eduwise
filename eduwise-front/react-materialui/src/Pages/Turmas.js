@@ -121,20 +121,12 @@ export function Turmas() {
         getTurmas();
     }, []);
 
-    const handleClick = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
     const handleDrawerOpen = () => {
         setDrawerOpen(true);
     };
 
     const handleDrawerClose = () => {
         setDrawerOpen(false);
-    };
-
-    const handleClosePopover = () => {
-        setAnchorEl(null);
     };
 
     const getTurmas = async () => {

@@ -104,7 +104,7 @@ export function Home() {
                                 <a href="#servicos" onClick={RolagemServicos}>Serviços</a>
                                 <a href="#projeto" onClick={RolagemProjeto}>Projeto</a>
                                 <a href="#comunidade" onClick={RolagemComunidade}>Comunidade</a>
-                                <a class="btn" href="/cadastrar">Login</a>
+                                <a class="btn" href="/login">Login</a>
                             </ul>
                         </nav>
                         <section class="banner">
@@ -122,7 +122,7 @@ export function Home() {
                         <section class="sobre-nos">
                             <div class="sobre">
                                 <h3>SOBRE NÓS</h3>
-                                <p>
+                                <p className='texto-justificado'>
                                     Olá! Somos um trio de alunas do Colégio Técnico de Campinas (COTUCA)
                                     e estamos emocionadas em compartilhar um pouco sobre nossa jornada e sonhos.
                                     Com o nome de Ártemis Innovative Education, estamos determinadas a deixar nossa
@@ -180,7 +180,7 @@ export function Home() {
                     <div class="container">
                         <div class="projeto-p1">
                             <h3>PROJETO</h3>
-                            <p>O Projeto EduWise é uma inovação revolucionária que visa <strong>capacitar os professores 
+                            <p className='texto-justificado'>O Projeto EduWise é uma inovação revolucionária que visa <strong>capacitar os professores 
                                 do Ensino Fundamental I por meio da Tecnologia e Inteligência Artificial</strong>. Com o 
                                 objetivo de tornar o processo de ensino mais personalizado e eficaz, o EduWise 
                                 oferece ferramentas avançadas para os educadores administrarem individualmente 
@@ -205,7 +205,7 @@ export function Home() {
                             <img src={captura2} alt="projeto-p1" />
                         </div>
                         <div class="projeto-p1">
-                            <p>Ao fazer isso, almejamos não apenas melhorar o desempenho acadêmico, mas também nutrir o <strong>engajamento
+                            <p className='texto-justificado'>Ao fazer isso, almejamos não apenas melhorar o desempenho acadêmico, mas também nutrir o <strong>engajamento
                                 e a autoconfiança</strong> dos estudantes em seu aprendizado. Vislumbramos um ambiente educacional onde cada 
                                 aluno possa florescer e prosperar, preparando-os para um futuro de sucesso. Em última análise, nosso 
                                 sonho é estabelecer um sistema educacional verdadeiramente equitativo e eficaz, onde as oportunidades 

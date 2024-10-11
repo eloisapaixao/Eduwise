@@ -114,6 +114,12 @@ export function Alunos() {
   const [alunos, setAlunos] = useState([]);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const openMenu = Boolean(anchorEl);
+  const [showTurmasList, setShowTurmasList] = useState(false);
+  const [turmas, setTurmas] = useState([]);
+
+  useEffect(() => {
+    getTurmas();
+  }, []);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -182,10 +188,59 @@ export function Alunos() {
     navigate('/ia')
   };
 
+  const getTurmas = async () => {
+    const emailProfessor = localStorage.getItem("email")
+    let idProfessor
+    /////
+    await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
+      .then(function (response) {
+        idProfessor = response.data.id
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
+      .then(function (response) {
+        setTurmas([...turmas, response.data]);
+        setNome('');
+        setDialogOpen(false);
+      })
+      .catch(function (error) {
+        console.error('Erro ao pegar turma:', error);
+      });
+  }
+
+  const handleSchoolIconClick = () => {
+    setShowTurmasList(!showTurmasList);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('email');
+
+    localStorage.removeItem('authToken');
+
+    navigate('/login');
+  };
+
+  const inicial = () => {
+    navigate("/turmas")
+  }
+
+  const home = () => {
+    localStorage.removeItem('email');
+    localStorage.removeItem('authToken');
+    navigate("/")
+  }
+
+  const aluno = (id) => {
+    localStorage.setItem("classId", id)
+    navigate("/alunos")
+  }
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <AppBar position="fixed" open={open} color='inherit'>
+      <AppBar position="fixed" open={drawerOpen} color='inherit'>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -200,7 +255,7 @@ export function Alunos() {
             <MenuIcon />
           </IconButton>
 
-          <img src='/images/logo.png' alt='logo /' style={{ height: 30, }} />
+          <img src='/images/logo.png' alt='logo /' style={{ height: 30, }} onClick={home} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
           <IconButton color='inherit' onClick={() => setDialogOpen(true)}>
             <PersonAddAlt1Icon />
@@ -283,13 +338,13 @@ export function Alunos() {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>Logout</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </div>
           )}
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={drawerOpen}>
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -302,48 +357,58 @@ export function Alunos() {
               <ListItemButton
                 sx={{
                   minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
+                  justifyContent: drawerOpen ? 'initial' : 'center',
                   px: 2.5,
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : 'auto',
+                    mr: drawerOpen ? 3 : 'auto',
                     justifyContent: 'center',
                   }}
                 >
-                  {index % 2 === 0 ? <HomeIcon /> : <TodayIcon />}
+                  {index % 2 === 0 ? <HomeIcon onClick={inicial} /> : <TodayIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}
         </List>
         <Divider />
         <List>
-          {['Turmas'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: drawerOpen ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              onClick={handleSchoolIconClick}
+            >
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
-                  px: 2.5,
+                  minWidth: 0,
+                  mr: drawerOpen ? 3 : 'auto',
+                  justifyContent: 'center',
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: open ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {<SchoolIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+                <SchoolIcon />
+              </ListItemIcon>
+              <ListItemText primary="Turmas" sx={{ opacity: drawerOpen ? 1 : 0 }} />
+            </ListItemButton>
+            {showTurmasList && (
+              <List component="div" disablePadding>
+                {turmas[0].map((turma, index) => {
+                  return (
+                    <ListItemButton key={index} sx={{ pl: 4 }} onClick={() => aluno(turma.id)}>
+                      <ListItemText primary={turma.name} />
+                    </ListItemButton>
+                  )
+                })}
+              </List>
+            )}
+          </ListItem>
         </List>
         <Divider />
         <List>
@@ -352,20 +417,20 @@ export function Alunos() {
               <ListItemButton
                 sx={{
                   minHeight: 48,
-                  justifyContent: open ? 'initial' : 'center',
+                  justifyContent: drawerOpen ? 'initial' : 'center',
                   px: 2.5,
                 }}
               >
                 <ListItemIcon
                   sx={{
                     minWidth: 0,
-                    mr: open ? 3 : 'auto',
+                    mr: drawerOpen ? 3 : 'auto',
                     justifyContent: 'center',
                   }}
                 >
                   {index % 2 === 0 ? <ArchiveIcon /> : <SettingsIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+                <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
               </ListItemButton>
             </ListItem>
           ))}

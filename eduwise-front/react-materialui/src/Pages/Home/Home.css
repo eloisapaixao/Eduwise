@@ -363,3 +363,7 @@ nav img{
     cursor: pointer;
     transform: scale(1.2)
 }
+
+.texto-justificado{
+    text-align: justify;
+}
