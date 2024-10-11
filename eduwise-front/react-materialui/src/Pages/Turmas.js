@@ -39,7 +39,6 @@ import CardActionArea from '@mui/material/CardActionArea';
 import FolderOpenIcon from '@mui/icons-material/Folder';
 import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
 import { useNavigate } from 'react-router-dom'
-import Autocomplete from '@mui/material/Autocomplete';
 
 const drawerWidth = 240;
 
@@ -210,6 +209,16 @@ export function Turmas() {
         navigate("/alunos")
     }
 
+    const inicial = () =>{
+        navigate("/turmas")
+    }
+
+    const home = () =>{
+        localStorage.removeItem('email');
+        localStorage.removeItem('authToken');
+        navigate("/")
+    }
+
     const handleLogout = () => {
         localStorage.removeItem('email');
 
@@ -235,7 +244,7 @@ export function Turmas() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <img src='/images/logo.png' alt='logo' style={{ height: 30 }} />
+                    <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={home}/>
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
                     <IconButton color='inherit' onClick={() => setDialogOpen(true)}>
                         <AddCardIcon />
@@ -338,7 +347,7 @@ export function Turmas() {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    {index % 2 === 0 ? <HomeIcon /> : <TodayIcon />}
+                                    {index % 2 === 0 ? <HomeIcon onClick={inicial} /> : <TodayIcon />}
                                 </ListItemIcon>
                                 <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
                             </ListItemButton>
@@ -369,11 +378,13 @@ export function Turmas() {
                         </ListItemButton>
                         {showTurmasList && (
                             <List component="div" disablePadding>
-                                {turmas.map((turma, index) => (
-                                    <ListItemButton key={index} sx={{ pl: 4 }} onClick={() => aluno(turma.id)}>
-                                        <ListItemText primary={turma.name} />
-                                    </ListItemButton>
-                                ))}
+                                {turmas[0].map((turma, index) => {
+                                    return (
+                                        <ListItemButton key={index} sx={{ pl: 4 }} onClick={() => aluno(turma.id)}>
+                                            <ListItemText primary={turma.name} />
+                                        </ListItemButton>
+                                    )
+                                })}
                             </List>
                         )}
                     </ListItem>
