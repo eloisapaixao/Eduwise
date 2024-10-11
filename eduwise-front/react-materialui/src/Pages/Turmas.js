@@ -116,7 +116,7 @@ export function Turmas() {
     const [turmas, setTurmas] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [auth, setAuth] = useState(true);
-    const [turmasNomes, setTurmasNomes] = useState([]);
+    const [showTurmasList, setShowTurmasList] = useState(false);
 
     useEffect(() => {
         getTurmas();
@@ -153,14 +153,16 @@ export function Turmas() {
             .then(function (response) {
                 setTurmas([...turmas, response.data]);
                 setNome('');
-                const nomes = response.data.map(turma => turma.name);
-                setTurmasNomes(nomes);
                 setDialogOpen(false);
             })
             .catch(function (error) {
                 console.error('Erro ao pegar turma:', error);
             });
     }
+
+    const handleSchoolIconClick = () => {
+        setShowTurmasList(!showTurmasList);
+    };
 
     const adicionarTurma = async () => {
         const emailProfessor = localStorage.getItem("email")
@@ -345,35 +347,36 @@ export function Turmas() {
                 </List>
                 <Divider />
                 <List>
-                    {['Turmas'].map((text) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
+                    <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: drawerOpen ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                            onClick={handleSchoolIconClick}
+                        >
+                            <ListItemIcon
                                 sx={{
-                                    minHeight: 48,
-                                    justifyContent: drawerOpen ? 'initial' : 'center',
-                                    px: 2.5,
+                                    minWidth: 0,
+                                    mr: drawerOpen ? 3 : 'auto',
+                                    justifyContent: 'center',
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: drawerOpen ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    <Autocomplete
-                                        disablePortal
-                                        id="combo-box-demo"
-                                        options={turmasNomes}
-                                        sx={{ width: 30 }}
-                                        renderInput={(params) => <SchoolIcon />}
-                                        inputRef={input => input && input.focus()}
-                                    />
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                                <SchoolIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Turmas" sx={{ opacity: drawerOpen ? 1 : 0 }} />
+                        </ListItemButton>
+                        {showTurmasList && (
+                            <List component="div" disablePadding>
+                                {turmas.map((turma, index) => (
+                                    <ListItemButton key={index} sx={{ pl: 4 }} onClick={() => aluno(turma.id)}>
+                                        <ListItemText primary={turma.name} />
+                                    </ListItemButton>
+                                ))}
+                            </List>
+                        )}
+                    </ListItem>
                 </List>
                 <Divider />
                 <List>

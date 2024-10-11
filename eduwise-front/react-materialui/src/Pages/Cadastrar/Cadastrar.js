@@ -48,11 +48,9 @@ export function Cadastrar() {
                 <img src={LOGIN_IMAGE} className='imagem-login'/>
             </div>
             <Container 
-                maxWidth="sm" 
                 sx={{ 
-                    backgroundColor: '#f9f9f9', 
+                    backgroundColor: '#ffff', 
                     borderRadius: '8px', 
-                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',  
                 }}
             >
                 <div className='espaco-imagem-logo'>
@@ -88,7 +86,7 @@ export function Cadastrar() {
                             fullWidth
                             margin="normal"
                             required
-                            sx={{ backgroundColor: '#fff', color: '#65469B', mt: 5 }}
+                            sx={{ backgroundColor: '#fff', color: '#65469B', mt: 3 }}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -99,7 +97,7 @@ export function Cadastrar() {
                             fullWidth
                             margin="normal"
                             required
-                            sx={{ backgroundColor: '#fff', color: '#65469B', mt: 5 }}
+                            sx={{ backgroundColor: '#fff', color: '#65469B', mt: 3 }}
                             value={senha}
                             onChange={(e) => setSenha(e.target.value)}
                         />
@@ -110,14 +108,14 @@ export function Cadastrar() {
                             fullWidth
                             margin="normal"
                             required
-                            sx={{ backgroundColor: '#fff', color: '#65469B', mt: 5 }}
+                            sx={{ backgroundColor: '#fff', color: '#65469B', mt: 3 }}
                             value={escola}
                             onChange={(e) => setEscola(e.target.value)}
                         />
 
-                        <Stack spacing={2} direction="row" sx={{mt: 5}}>
-                            <Button variant="contained" sx={{ fontWeight: 'bold', backgroundColor: '#65469B', color: '#fff',  mt: 15, width: 300}} onClick={registrar}>REGISTRAR</Button>
-                            <Button variant="outlined" sx={{ fontWeight: 'bold', color: '#65469B', mt: 15, width: 300, borderColor: '#65469B'}} onClick={logar}>LOGAR</Button>
+                        <Stack spacing={2} direction="row" sx={{mt: 3}}>
+                            <Button variant="contained" sx={{ fontWeight: 'bold', backgroundColor: '#65469B', color: '#fff', width: 300}} onClick={registrar}>REGISTRAR</Button>
+                            <Button variant="outlined" sx={{ fontWeight: 'bold', color: '#65469B', width: 300, borderColor: '#65469B'}} onClick={logar}>LOGAR</Button>
                         </Stack>
                         <FormControlLabel
                             control={<Checkbox color="secondary" />}
@@ -125,7 +123,7 @@ export function Cadastrar() {
                             sx={{mt: 2}}
                         />
                     </Box>
-                    <ButtonGroup variant="text" aria-label="text button group" align="left" color="secondary #65469B" sx={{mt: 12}}>
+                    <ButtonGroup variant="text" aria-label="text button group" align="left" color="secondary #65469B" sx={{mt: 5}}>
                         <Button sx={{color: '#65469B'}} >Facebook</Button>
                         <Button sx={{color: '#65469B'}}>Linkedin</Button>
                         <Button sx={{color: '#65469B'}}>Google</Button>

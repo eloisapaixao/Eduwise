@@ -51,11 +51,9 @@ export function Login({ setLoggedInTeacherId }) {
                 <img src={LOGIN_IMAGE} className='imagem-login'/>
             </div>
             <Container 
-                maxWidth="sm" 
                 sx={{ 
-                    backgroundColor: '#f9f9f9', 
-                    borderRadius: '8px', 
-                    boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',  
+                    backgroundColor: '#ffff', 
+                    borderRadius: '8px',
                 }}
             >
                 <div className='espaco-imagem-logo'>
@@ -106,7 +104,7 @@ export function Login({ setLoggedInTeacherId }) {
                         </Stack>
 
                     </Box>
-                    <ButtonGroup variant="text" aria-label="text button group" align="left" color="secondary #65469B" sx={{mt: 28}}>
+                    <ButtonGroup variant="text" aria-label="text button group" align="left" color="secondary #65469B" sx={{mt: 15}}>
                         <Button sx={{color: '#65469B'}} >Facebook</Button>
                         <Button sx={{color: '#65469B'}}>Linkedin</Button>
                         <Button sx={{color: '#65469B'}}>Google</Button>
