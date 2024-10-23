@@ -30,7 +30,7 @@ import { TextField, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom'
 import { Container, Grid, Avatar } from '@mui/material'
 import './IA.css'
-
+import Autocomplete from '@mui/material/Autocomplete';
 
 const drawerWidth = 240;
 
@@ -98,32 +98,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-const subjects = [
-    { name: 'Português', color: '#FF4F4F' },
-    { name: 'Matemática', color: '#5A6ABF' },
-    { name: 'Ciências', color: '#62B05A' },
-    { name: 'História', color: '#F8A345' },
-    { name: 'Geografia', color: '#E04DB6' },
-    { name: 'Inglês', color: '#FF4F4F' },
-    { name: 'Artes', color: '5A6ABF' },
-    { name: 'Educação Física', color: '#62B05A' },
-    { name: 'Ensino Religioso', color: '#F8A345' },
-    { name: 'Computação', color: '#E04DB6' }
-]
-
 export function IA() {
     const theme = useTheme();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
-    const [nome, setNome] = useState('');
-    const [serie, setSerie] = useState('');
     const [turmas, setTurmas] = useState([]);
+    const [contents, setContents] = useState([]);
+    const [subjects, setSubjects] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [auth, setAuth] = useState(true);
     const [showTurmasList, setShowTurmasList] = useState(false);
 
     useEffect(() => {
         getTurmas();
+        getSubjects();
     }, []);
 
     const getTurmas = async () => {
@@ -140,13 +128,34 @@ export function IA() {
         await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
             .then(function (response) {
                 setTurmas([...turmas, response.data]);
-                setNome('');
                 setDialogOpen(false);
             })
             .catch(function (error) {
                 console.error('Erro ao pegar turma:', error);
             });
     }
+
+    const getSubjects = async () => {
+        await axios.get('http://localhost:8080/subjects')
+            .then(function (response) {
+                setSubjects(response.data);
+            })
+            .catch(function (error) {
+                console.error('Erro ao pegar disciplinas:', error);
+            });
+    };
+
+    const getContents = async () => {
+        
+    }
+
+    const colorPalette = [
+        '#FF4F4F',
+        '#5A6ABF',
+        '#62B05A',
+        '#F8A345',
+        '#E04DB6'
+    ];
 
     const handleSchoolIconClick = () => {
         setShowTurmasList(!showTurmasList);
@@ -173,6 +182,11 @@ export function IA() {
     const aluno = (id) => {
         localStorage.setItem("classId", id)
         navigate("/alunos")
+    }
+
+    const content = (id) => {
+        localStorage.setItem("id", id)
+        console.log("Subject ID:", id)
     }
 
     const inicial = () => {
@@ -343,7 +357,7 @@ export function IA() {
                     </List>
                 </Drawer>
             </Box>
-            <Container maxWidth="lg" style={{marginTop: '60px'}}>
+            <Container maxWidth="lg" style={{ marginTop: '60px' }}>
                 <Grid container spacing={2} alignItems={'center'} style={{ marginTop: '20px' }}>
                     <Grid item>
                         <Avatar style={{ backgroundColor: '#BDBDBD', width: 56, height: 56 }}>
@@ -360,11 +374,21 @@ export function IA() {
                 <Grid container spacing={2} style={{ marginTop: '20px' }}>
                     {subjects.map((subject, index) => (
                         <Grid item key={index}>
-                            <Button variant='contained' style={{ backgroundColor: subject.color, color: '#fff' }}>
-                                {subject.name}
+                            <Button variant='contained' style={{ backgroundColor: colorPalette[index % colorPalette.length], color: '#fff' }} onClick={() => content(subject.id)}>
+                                {subject.name.replace(/_/g, ' ')}
                             </Button>
                         </Grid>
                     ))}
+                </Grid>
+
+                <Grid container spacing={2} style={{ marginTop: '20px', marginLeft: '0.1px' }}>
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={subjects.map((subject) => (subject.name))}
+                        sx={{ width: 300 }}
+                        renderInput={(params) => <TextField {...params} label="Conteúdo" />}
+                    />
                 </Grid>
             </Container>
         </div>
