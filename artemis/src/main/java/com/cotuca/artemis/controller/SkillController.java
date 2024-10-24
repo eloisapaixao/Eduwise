@@ -33,7 +33,7 @@ public class SkillController {
     public List<SkillData> getSkillBySubcontent(@PathVariable Integer subcontentId) {
         Optional<Subcontent> subcontent = subcontentRepository.findById(subcontentId);
         if (subcontent.isPresent()) {
-            List<Skill> skills = repository.findByContent(subcontent.get());
+            List<Skill> skills = repository.findBySubcontent(subcontent.get());
             return skills.stream()
                     .map(skill -> new SkillData(skill.getId(), skill.getName(), skill.getSubcontent().getId()))
                     .collect(Collectors.toList());

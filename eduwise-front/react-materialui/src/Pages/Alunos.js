@@ -139,25 +139,8 @@ export function Alunos() {
 
   const adicionarAluno = async () => {
     const idClassroom = parseInt(localStorage.getItem("classId"))
-
-    let subjects = []
     try {
-      const response = await axios.get('http://localhost:8080/subjects')
-      subjects = response.data.map(subject => subject.id)
-    } catch (error) {
-      console.error('Erro ao buscar matérias:', error)
-    }
-
-    const novoAluno = {
-      name: nome,
-      birthday: birthday,
-      email: emailAluno,
-      classroomId: { id: parseInt(idClassroom, 10) },
-      subjects: subjects
-    };
-
-    try {
-      const response = await axios.post('http://localhost:8080/students', novoAluno)
+      const response = await axios.post('http://localhost:8080/students/' + idClassroom)
       console.log('Aluno adicionado com sucesso:', response.data)
       setAlunos([...alunos, response.data])
       setDialogOpen(false)

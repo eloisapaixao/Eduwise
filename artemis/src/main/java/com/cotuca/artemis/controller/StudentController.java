@@ -8,6 +8,7 @@ import com.cotuca.artemis.repositories.ClassroomRepository;
 import com.cotuca.artemis.repositories.StudentRepository;
 import com.cotuca.artemis.repositories.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,16 +34,15 @@ public class StudentController {
         return repository.findById(id);
     }
 
-    /*@PostMapping
-    public StudentData createStudent(@RequestBody StudentData student){
-        Classroom classroom = classroomRepository.findById(student.classrromId()).orElse(null);
-
-        for(Integer s : student.subjects()) {
-            Subject subject = subjectRepository.findById(s).orElse(null);
-        }
-
-        Student aluno = new Student(student.id(), student.name(), student.birthday(), student.email(), classroom, student.subjects() != null? student.subjects().stream().map(Subject::getId).collect(Collectors.toList()) : null);
-    }*/
+    @PostMapping("/{classroomId}")
+    public ResponseEntity<Student> createAccount(@PathVariable Integer classroomId, @RequestBody Student student) {
+        return classroomRepository.findById(classroomId)
+                .map(classroom -> {
+                    student.setClassroom(classroom);
+                    return ResponseEntity.ok(repository.save(student));
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @DeleteMapping("/{id}")
     public void deleteStudent(@PathVariable Integer id){
