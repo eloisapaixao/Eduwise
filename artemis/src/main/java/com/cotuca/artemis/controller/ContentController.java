@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,11 +29,16 @@ public class ContentController {
     }
 
     @GetMapping("/getBySubject/{subjectId}")
-    public ContentData getContentBySubject(@PathVariable int subjectId){
+    public List<ContentData> getContentBySubject(@PathVariable Integer subjectId) {
         Optional<Subject> subject = subjectRepository.findById(subjectId);
-        Content content = repository.findBySubject(subject.get()).orElse(null);
-
-        return new ContentData(content.getId(), content.getName(), content.getLevel(), content.getSubject().getId());
+        if (subject.isPresent()) {
+            List<Content> contents = repository.findBySubject(subject.get());
+            return contents.stream()
+                    .map(content -> new ContentData(content.getId(), content.getName(), content.getLevel(), content.getSubject().getId()))
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     @PostMapping

@@ -6,8 +6,9 @@ import com.cotuca.artemis.model.Teacher;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface ContentRepository extends JpaRepository<Content, Integer> {
-    Optional<Content> findBySubject(Subject subject);
+    List<Content> findBySubject(Subject subject);
 }

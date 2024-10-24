@@ -104,14 +104,19 @@ export function IA() {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [turmas, setTurmas] = useState([]);
     const [contents, setContents] = useState([]);
+    const [subcontents, setSubcontents] = useState([]);
+    const [skills, setSkills] = useState([]);
     const [subjects, setSubjects] = useState([]);
     const [anchorEl, setAnchorEl] = useState(null);
     const [auth, setAuth] = useState(true);
     const [showTurmasList, setShowTurmasList] = useState(false);
 
     useEffect(() => {
-        getTurmas();
-        getSubjects();
+        getTurmas()
+        getSubjects()
+        getContents()
+        getSubcontents()
+        getSkills()
     }, []);
 
     const getTurmas = async () => {
@@ -145,8 +150,43 @@ export function IA() {
             });
     };
 
-    const getContents = async () => {
-        
+    const getContents = async (id) => {
+        localStorage.setItem("id", id);
+        console.log("Subject ID:", id);
+
+        await axios.get('http://localhost:8080/contents/getBySubject/' + id)
+            .then(function (response) {
+                setContents(response.data);
+            })
+            .catch(function (error) {
+                console.error('Erro ao pegar conteúdos:', error);
+            });
+    }
+
+    const getSubcontents = async (id) => {
+        localStorage.setItem("id", id);
+        console.log("Content ID:", id);
+
+        await axios.get('http://localhost:8080/subcontents/getByContent/' + id)
+            .then(function (response) {
+                setSubcontents(response.data);
+            })
+            .catch(function (error) {
+                console.error('Erro ao pegar subconteúdos:', error);
+            });
+    }
+
+    const getSkills = async (id) => {
+        localStorage.setItem("id", id);
+        console.log("subcontent ID:", id);
+
+        await axios.get('http://localhost:8080/subcontents/getByContent/' + id)
+            .then(function (response) {
+                setSkills(response.data);
+            })
+            .catch(function (error) {
+                console.error('Erro ao pegar habilidades:', error);
+            });
     }
 
     const colorPalette = [
@@ -184,11 +224,6 @@ export function IA() {
         navigate("/alunos")
     }
 
-    const content = (id) => {
-        localStorage.setItem("id", id)
-        console.log("Subject ID:", id)
-    }
-
     const inicial = () => {
         navigate("/turmas")
     }
@@ -196,14 +231,14 @@ export function IA() {
     const home = () => {
         localStorage.removeItem('email');
         localStorage.removeItem('authToken');
+        localStorage.removeItem('id')
         navigate("/")
     }
 
     const handleLogout = () => {
         localStorage.removeItem('email');
-
         localStorage.removeItem('authToken');
-
+        localStorage.removeItem('id')
         navigate('/login');
     };
 
@@ -374,7 +409,7 @@ export function IA() {
                 <Grid container spacing={2} style={{ marginTop: '20px' }}>
                     {subjects.map((subject, index) => (
                         <Grid item key={index}>
-                            <Button variant='contained' style={{ backgroundColor: colorPalette[index % colorPalette.length], color: '#fff' }} onClick={() => content(subject.id)}>
+                            <Button variant='contained' style={{ backgroundColor: colorPalette[index % colorPalette.length], color: '#fff' }} onClick={() => getContents(subject.id)}>
                                 {subject.name.replace(/_/g, ' ')}
                             </Button>
                         </Grid>
@@ -385,9 +420,35 @@ export function IA() {
                     <Autocomplete
                         disablePortal
                         id="combo-box-demo"
-                        options={subjects.map((subject) => (subject.name))}
-                        sx={{ width: 300 }}
-                        renderInput={(params) => <TextField {...params} label="Conteúdo" />}
+                        options={contents.map((content) => (content.name))}
+                        sx={{ width: 300}}
+                        renderInput={(params) => <TextField {...params} label="Subonteúdo" />}
+                        onChange={(event, newValue) => {
+                            const selectedContent = contents.find(content => content.name === newValue);
+                            if (selectedContent) {
+                                getSubcontents(selectedContent.id);
+                            }
+                        }}
+                    />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={subcontents.map((subcontent) => (subcontent.name))}
+                        sx={{ width: 300, marginLeft: '58px' }}
+                        renderInput={(params) => <TextField {...params} label="Subconteúdo" />}
+                        onChange={(event, newValue) => {
+                            const selectedContent = subcontents.find(subcontent => subcontent.name === newValue);
+                            if (selectedContent) {
+                                getSkills(selectedContent.id);
+                            }
+                        }}
+                    />
+                    <Autocomplete
+                        disablePortal
+                        id="combo-box-demo"
+                        options={skills.map((skill) => (skill.name))}
+                        sx={{ width: 300, marginLeft: '58px' }}
+                        renderInput={(params) => <TextField {...params} label="Habilidades" />}
                     />
                 </Grid>
             </Container>
