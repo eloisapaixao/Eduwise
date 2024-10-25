@@ -1,9 +1,6 @@
 package com.cotuca.artemis.controller;
 
-import com.cotuca.artemis.model.Classroom;
-import com.cotuca.artemis.model.ClassroomData;
-import com.cotuca.artemis.model.ClassroomRequest;
-import com.cotuca.artemis.model.Teacher;
+import com.cotuca.artemis.model.*;
 import com.cotuca.artemis.repositories.ClassroomRepository;
 import com.cotuca.artemis.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +29,18 @@ public class ClassroomController {
     }
 
     @GetMapping("/{id}")
-    public ClassroomRequest getClassroomById(@PathVariable Integer id){
-        Classroom classroom = repository.findById(id).orElse(null);
+    public ResponseEntity<ClassroomResponse> getClassroomById(@PathVariable Integer id) {
 
-        return new ClassroomRequest(classroom.getId(), classroom.getName());
+        Optional<Classroom> optionalClassroom = repository.findById(id);
+
+        if (optionalClassroom.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Classroom classroom = optionalClassroom.get();
+        ClassroomResponse classroomResponse = new ClassroomResponse(classroom.getId(), classroom.getLevel(), classroom.getName());
+
+        return ResponseEntity.ok(classroomResponse);
     }
 
     @GetMapping("/prof/{id}")

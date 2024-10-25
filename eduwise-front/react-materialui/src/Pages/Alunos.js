@@ -118,8 +118,9 @@ export function Alunos() {
   const [turmas, setTurmas] = useState([]);
 
   useEffect(() => {
-    getTurmas();
-  }, []);
+    getAlunos()
+    getTurmas()
+  }, [])
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -135,19 +136,27 @@ export function Alunos() {
 
   const handleDrawerClose = () => {
     setDrawerOpen(false);
-  };
+  }
 
   const adicionarAluno = async () => {
-    const idClassroom = parseInt(localStorage.getItem("classId"))
-    try {
-      const response = await axios.post('http://localhost:8080/students/' + idClassroom)
-      console.log('Aluno adicionado com sucesso:', response.data)
-      setAlunos([...alunos, response.data])
-      setDialogOpen(false)
-    } catch (error) {
-      console.error('Erro ao adicionar aluno:', error)
+    const idClassroom = parseInt(localStorage.getItem("classId"));
+    const student = {
+      name: nome,
+      email: emailAluno,
+      birthday: birthday,
     }
-  };
+  
+    try {
+      const response = await axios.post(`http://localhost:8080/students/${idClassroom}`, student);
+      console.log('Aluno adicionado com sucesso:', response.data);
+      setAlunos([...alunos, response.data]);
+      setDialogOpen(false);
+
+      window.location.reload();
+    } catch (error) {
+      console.error('Erro ao adicionar aluno:', error);
+    }
+  }  
 
   const handleBirthdayChange = (e) => {
     const value = e.target.value.replace(/\D/g, '')
@@ -193,6 +202,17 @@ export function Alunos() {
       });
   }
 
+  const getAlunos = async () => {
+    const idClassroom = localStorage.getItem("classId")
+    
+    try {
+      const response = await axios.get(`http://localhost:8080/students/getByClassroom/${idClassroom}`)
+      setAlunos(response.data)
+    } catch (error) {
+      console.error('Erro ao carregar alunos:', error)
+    }
+  }
+
   const handleSchoolIconClick = () => {
     setShowTurmasList(!showTurmasList);
   };
@@ -204,6 +224,19 @@ export function Alunos() {
 
     navigate('/login');
   };
+
+  const handleAlunoClick = async (aluno) => {
+    const idClassroom = localStorage.getItem("classId")
+    try {
+      const response = await axios.get(`http://localhost:8080/classrooms/${idClassroom}`);
+      const classroom = response.data;
+  
+      navigate('/ia', { state: { nomeAluno: aluno, levelAluno: classroom.level } });
+    } catch (error) {
+      console.error('Erro ao carregar turma:', error);
+    }
+  };
+  
 
   const inicial = () => {
     navigate("/turmas")
@@ -433,7 +466,7 @@ export function Alunos() {
             {alunos.map((aluno) => (
               <React.Fragment key={aluno.id}>
                 <ListItem>
-                  <ListItemButton onClick={ia}>
+                  <ListItemButton onClick={() => handleAlunoClick(aluno.name)}>
                     <ListItemText primary={aluno.name} />
                   </ListItemButton>
                   <Button>

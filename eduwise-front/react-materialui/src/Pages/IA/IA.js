@@ -1,36 +1,37 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { styled, useTheme } from '@mui/material/styles';
-import Box from '@mui/material/Box';
-import MuiDrawer from '@mui/material/Drawer';
-import MuiAppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
-import CssBaseline from '@mui/material/CssBaseline';
-import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ListItem from '@mui/material/ListItem';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import SettingsIcon from '@mui/icons-material/Settings';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import AppsIcon from '@mui/icons-material/Apps';
-import SchoolIcon from '@mui/icons-material/School';
-import HomeIcon from '@mui/icons-material/Home';
-import TodayIcon from '@mui/icons-material/Today';
-import AccountCircle from '@mui/icons-material/AccountCircle';
-import MenuItem from '@mui/material/MenuItem';
-import Menu from '@mui/material/Menu';
-import { TextField, Button } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles'
+import Box from '@mui/material/Box'
+import MuiDrawer from '@mui/material/Drawer'
+import MuiAppBar from '@mui/material/AppBar'
+import Toolbar from '@mui/material/Toolbar'
+import List from '@mui/material/List'
+import CssBaseline from '@mui/material/CssBaseline'
+import Typography from '@mui/material/Typography'
+import Divider from '@mui/material/Divider'
+import IconButton from '@mui/material/IconButton'
+import MenuIcon from '@mui/icons-material/Menu'
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft'
+import ChevronRightIcon from '@mui/icons-material/ChevronRight'
+import ListItem from '@mui/material/ListItem'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemIcon from '@mui/material/ListItemIcon'
+import ListItemText from '@mui/material/ListItemText'
+import SettingsIcon from '@mui/icons-material/Settings'
+import ArchiveIcon from '@mui/icons-material/Archive'
+import AppsIcon from '@mui/icons-material/Apps'
+import SchoolIcon from '@mui/icons-material/School'
+import HomeIcon from '@mui/icons-material/Home'
+import TodayIcon from '@mui/icons-material/Today'
+import AccountCircle from '@mui/icons-material/AccountCircle'
+import MenuItem from '@mui/material/MenuItem'
+import Menu from '@mui/material/Menu'
+import { TextField, Button } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { Container, Grid, Avatar } from '@mui/material'
 import './IA.css'
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete from '@mui/material/Autocomplete'
+import { useLocation } from 'react-router-dom'
 
 const drawerWidth = 240;
 
@@ -41,7 +42,7 @@ const openedMixin = (theme) => ({
         duration: theme.transitions.duration.enteringScreen,
     }),
     overflowX: 'hidden',
-});
+})
 
 const closedMixin = (theme) => ({
     transition: theme.transitions.create('width', {
@@ -53,7 +54,7 @@ const closedMixin = (theme) => ({
     [theme.breakpoints.up('sm')]: {
         width: `calc(${theme.spacing(8)} + 1px)`,
     },
-});
+})
 
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -61,7 +62,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-}));
+}))
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
@@ -79,7 +80,7 @@ const AppBar = styled(MuiAppBar, {
             duration: theme.transitions.duration.enteringScreen,
         }),
     }),
-}));
+}))
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -96,20 +97,25 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
             '& .MuiDrawer-paper': closedMixin(theme),
         }),
     }),
-);
+)
 
 export function IA() {
-    const theme = useTheme();
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [turmas, setTurmas] = useState([]);
-    const [contents, setContents] = useState([]);
-    const [subcontents, setSubcontents] = useState([]);
-    const [skills, setSkills] = useState([]);
-    const [subjects, setSubjects] = useState([]);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [auth, setAuth] = useState(true);
-    const [showTurmasList, setShowTurmasList] = useState(false);
+    const theme = useTheme()
+    const [drawerOpen, setDrawerOpen] = useState(false)
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [turmas, setTurmas] = useState([])
+    const [contents, setContents] = useState([])
+    const [subcontents, setSubcontents] = useState([])
+    const [skills, setSkills] = useState([])
+    const [subjects, setSubjects] = useState([])
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [auth, setAuth] = useState(true)
+    const [showTurmasList, setShowTurmasList] = useState(false)
+    const [selectedSubject, setSelectedSubject] = useState(null)
+    const [selectedContent, setSelectedContent] = useState(null)
+    const [selectedSubcontent, setSelectedSubcontent] = useState(null)
+    const location = useLocation()
+    const { nomeAluno, levelAluno } = location.state || {}
 
     useEffect(() => {
         getTurmas()
@@ -180,7 +186,7 @@ export function IA() {
         localStorage.setItem("id", id);
         console.log("subcontent ID:", id);
 
-        await axios.get('http://localhost:8080/subcontents/getByContent/' + id)
+        await axios.get('http://localhost:8080/skills/getBySubcontent/' + id)  // Supondo que seja o endpoint correto
             .then(function (response) {
                 setSkills(response.data);
             })
@@ -225,6 +231,9 @@ export function IA() {
     }
 
     const inicial = () => {
+        localStorage.removeItem('email');
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('id')
         navigate("/turmas")
     }
 
@@ -241,6 +250,8 @@ export function IA() {
         localStorage.removeItem('id')
         navigate('/login');
     };
+
+    const filteredContents = contents.filter((content) => content.level === levelAluno)
 
     return (
         <div className='pagina-ia'>
@@ -396,12 +407,12 @@ export function IA() {
                 <Grid container spacing={2} alignItems={'center'} style={{ marginTop: '20px' }}>
                     <Grid item>
                         <Avatar style={{ backgroundColor: '#BDBDBD', width: 56, height: 56 }}>
-                            M
+                            {nomeAluno?.charAt(0)}
                         </Avatar>
                     </Grid>
                     <Grid item>
                         <Typography variant='h6'>
-                            Maria Eduarda de Jesus Padovan
+                            {nomeAluno}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -409,7 +420,13 @@ export function IA() {
                 <Grid container spacing={2} style={{ marginTop: '20px' }}>
                     {subjects.map((subject, index) => (
                         <Grid item key={index}>
-                            <Button variant='contained' style={{ backgroundColor: colorPalette[index % colorPalette.length], color: '#fff' }} onClick={() => getContents(subject.id)}>
+                            <Button variant='contained' style={{ backgroundColor: colorPalette[index % colorPalette.length], color: '#fff' }}
+                                onClick={() => {
+                                    setSelectedSubject(subject.id)
+                                    getContents(subject.id)
+                                    setSelectedContent(null)
+                                    setSelectedSubcontent(null)
+                                }}>
                                 {subject.name.replace(/_/g, ' ')}
                             </Button>
                         </Grid>
@@ -419,35 +436,42 @@ export function IA() {
                 <Grid container spacing={2} style={{ marginTop: '20px', marginLeft: '0.1px' }}>
                     <Autocomplete
                         disablePortal
-                        id="combo-box-demo"
-                        options={contents.map((content) => (content.name))}
-                        sx={{ width: 300}}
-                        renderInput={(params) => <TextField {...params} label="Subonteúdo" />}
+                        id="free-solo-demo"
+                        freeSolo
+                        options={filteredContents.map((content) => content.name)}
+                        sx={{ width: 300 }}
+                        disabled={!selectedSubject}
+                        renderInput={(params) => <TextField {...params} label="Conteúdo" />}
                         onChange={(event, newValue) => {
-                            const selectedContent = contents.find(content => content.name === newValue);
+                            const selectedContent = contents.find(content => content.name === newValue)
                             if (selectedContent) {
-                                getSubcontents(selectedContent.id);
+                                setSelectedContent(selectedContent.id)
+                                getSubcontents(selectedContent.id)
+                                setSelectedSubcontent(null)
                             }
                         }}
                     />
                     <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={subcontents.map((subcontent) => (subcontent.name))}
+                        id="subcontent-autocomplete"
+                        freeSolo
+                        options={subcontents.map(subcontent => subcontent.name)}
                         sx={{ width: 300, marginLeft: '58px' }}
+                        disabled={!selectedContent}
                         renderInput={(params) => <TextField {...params} label="Subconteúdo" />}
                         onChange={(event, newValue) => {
-                            const selectedContent = subcontents.find(subcontent => subcontent.name === newValue);
-                            if (selectedContent) {
-                                getSkills(selectedContent.id);
+                            const selectedSubcontent = subcontents.find(subcontent => subcontent.name === newValue);
+                            if (selectedSubcontent) {
+                                setSelectedSubcontent(selectedSubcontent.id);
+                                getSkills(selectedSubcontent.id);
                             }
                         }}
                     />
                     <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={skills.map((skill) => (skill.name))}
+                        id="skills-autocomplete"
+                        freeSolo
+                        options={skills.map(skill => skill.name)}
                         sx={{ width: 300, marginLeft: '58px' }}
+                        disabled={!selectedSubcontent}
                         renderInput={(params) => <TextField {...params} label="Habilidades" />}
                     />
                 </Grid>

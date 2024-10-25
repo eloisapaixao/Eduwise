@@ -1,9 +1,6 @@
 package com.cotuca.artemis.controller;
 
-import com.cotuca.artemis.model.Classroom;
-import com.cotuca.artemis.model.Student;
-import com.cotuca.artemis.model.StudentData;
-import com.cotuca.artemis.model.Subject;
+import com.cotuca.artemis.model.*;
 import com.cotuca.artemis.repositories.ClassroomRepository;
 import com.cotuca.artemis.repositories.StudentRepository;
 import com.cotuca.artemis.repositories.SubjectRepository;
@@ -12,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,8 +32,21 @@ public class StudentController {
         return repository.findById(id);
     }
 
+    @GetMapping("/getByClassroom/{classroomId}")
+    public List<StudentData> getStudentByClassroom(@PathVariable Integer classroomId) {
+        Optional<Classroom> classroom = classroomRepository.findById(classroomId);
+        if (classroom.isPresent()) {
+            List<Student> students = repository.findByClassroom(classroom.get());
+            return students.stream()
+                    .map(student -> new StudentData(student.getId(), student.getName(), student.getBirthday(), student.getEmail(), student.getClassroom().getId()))
+                    .collect(Collectors.toList());
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
     @PostMapping("/{classroomId}")
-    public ResponseEntity<Student> createAccount(@PathVariable Integer classroomId, @RequestBody Student student) {
+    public ResponseEntity<Student> createStudent(@PathVariable Integer classroomId, @RequestBody Student student) {
         return classroomRepository.findById(classroomId)
                 .map(classroom -> {
                     student.setClassroom(classroom);

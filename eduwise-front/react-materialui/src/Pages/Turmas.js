@@ -37,7 +37,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardActionArea from '@mui/material/CardActionArea';
 import FolderOpenIcon from '@mui/icons-material/Folder';
-import PermContactCalendarIcon from '@mui/icons-material/PermContactCalendar';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom'
 
 const drawerWidth = 240;
@@ -429,7 +429,7 @@ export function Turmas() {
                                     <Divider />
                                     <CardActions>
                                         <IconButton color="inherit">
-                                            <PermContactCalendarIcon />
+                                            <DeleteIcon />
                                         </IconButton>
                                         <IconButton color="inherit">
                                             <FolderOpenIcon />
