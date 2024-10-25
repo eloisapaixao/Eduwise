@@ -11,8 +11,6 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -73,21 +71,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
+})(({ theme }) => ({
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    ...(open && {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(['width', 'margin'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    }),
-}));
+    width: '100%',
+    position: 'fixed',
+}))
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -116,18 +108,13 @@ export function Turmas() {
     const [anchorEl, setAnchorEl] = useState(null);
     const [auth, setAuth] = useState(true);
     const [showTurmasList, setShowTurmasList] = useState(false);
-    const [archivedTurmas, setArchivedTurmas] = useState([]);
 
     useEffect(() => {
         getTurmas();
     }, []);
 
-    const handleDrawerOpen = () => {
-        setDrawerOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-        setDrawerOpen(false);
+    const changeDrawerState = () => {
+        setDrawerOpen(!drawerOpen);
     };
 
     const getTurmas = async () => {
@@ -197,12 +184,6 @@ export function Turmas() {
         }
     };
 
-    const arquivarTurma = (classroom) => {
-        const turmaParaArquivar = turmas[0].find(turma => turma.id === classroom);
-        setArchivedTurmas([...archivedTurmas, turmaParaArquivar]);
-        setTurmas([turmas[0].filter(turma => turma.id !== classroom)]);
-    };
-
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -228,10 +209,6 @@ export function Turmas() {
         navigate("/")
     }
 
-    const arquivados = () => {
-        navigate("/arquivados")
-    }
-
     const handleLogout = () => {
         localStorage.removeItem('email');
 
@@ -243,16 +220,16 @@ export function Turmas() {
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" open={drawerOpen} color='inherit'>
+            <AppBar position="fixed" color='inherit'>
                 <Toolbar>
                     <IconButton
                         color="inherit"
                         aria-label="open drawer"
-                        onClick={handleDrawerOpen}
-                        edge="start"
+                        onClick={changeDrawerState}
+                        edge="end"
                         sx={{
                             marginRight: 5,
-                            ...(drawerOpen && { display: 'none' }),
+                            marginLeft: '-10px'
                         }}
                     >
                         <MenuIcon />
@@ -337,13 +314,7 @@ export function Turmas() {
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={drawerOpen}>
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
-                <List>
+                <List  sx={{marginTop: '65px'}}>
                     {['Início', 'Agenda'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                             <ListItemButton
@@ -404,7 +375,7 @@ export function Turmas() {
                 </List>
                 <Divider />
                 <List>
-                    {['Arquivados', 'Configurações'].map((text, index) => (
+                    {['Arquivos', 'Configurações'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                             <ListItemButton
                                 sx={{
@@ -452,7 +423,7 @@ export function Turmas() {
                                         <IconButton color="inherit" onClick={() => deletarTurma(turma.id)}>
                                             <DeleteIcon />
                                         </IconButton>
-                                        <IconButton color="inherit" onClick={() => arquivarTurma(turma.id)}>
+                                        <IconButton color="inherit">
                                             <FolderOpenIcon />
                                         </IconButton>
                                     </CardActions>

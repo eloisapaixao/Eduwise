@@ -40,7 +40,7 @@ import FolderOpenIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom'
 
-const drawerWidth = 240;
+const drawerWidth = 240
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -49,7 +49,7 @@ const openedMixin = (theme) => ({
         duration: theme.transitions.duration.enteringScreen,
     }),
     overflowX: 'hidden',
-});
+})
 
 const closedMixin = (theme) => ({
     transition: theme.transitions.create('width', {
@@ -61,7 +61,7 @@ const closedMixin = (theme) => ({
     [theme.breakpoints.up('sm')]: {
         width: `calc(${theme.spacing(8)} + 1px)`,
     },
-});
+})
 
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -69,25 +69,19 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-}));
+}))
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
+})(({ theme }) => ({
     zIndex: theme.zIndex.drawer + 1,
     transition: theme.transitions.create(['width', 'margin'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    ...(open && {
-        marginLeft: drawerWidth,
-        width: `calc(100% - ${drawerWidth}px)`,
-        transition: theme.transitions.create(['width', 'margin'], {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-        }),
-    }),
-}));
+    width: '100%',
+    position: 'fixed',
+}))
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -104,57 +98,56 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
             '& .MuiDrawer-paper': closedMixin(theme),
         }),
     }),
-);
+)
 
 export function Arquivados() {
-    const theme = useTheme();
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [nome, setNome] = useState('');
-    const [serie, setSerie] = useState('');
-    const [turmas, setTurmas] = useState([]);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [auth, setAuth] = useState(true);
-    const [showTurmasList, setShowTurmasList] = useState(false);
-    const [archivedTurmas, setArchivedTurmas] = useState([]);
+    const theme = useTheme()
+    const [drawerOpen, setDrawerOpen] = useState(false)
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [nome, setNome] = useState('')
+    const [serie, setSerie] = useState('')
+    const [turmas, setTurmas] = useState([])
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [auth, setAuth] = useState(true)
+    const [showTurmasList, setShowTurmasList] = useState(false)
+    const [archivedTurmas, setArchivedTurmas] = useState([])
 
     useEffect(() => {
-        getTurmas();
-    }, []);
+        const storedArchivedTurmas = localStorage.getItem('archivedTurmas');
+        let turmasArray = []
+        if (storedArchivedTurmas) {
+            turmasArray = JSON.parse(storedArchivedTurmas);
+            setArchivedTurmas(turmasArray);
+        } else {
+            getTurmasArquivadas();
+        }
+        //getTurmasArquivadas()
+    }, [])
 
-    const handleDrawerOpen = () => {
-        setDrawerOpen(true);
+    const changeDrawerState = () => {
+        setDrawerOpen(!drawerOpen);
     };
 
-    const handleDrawerClose = () => {
-        setDrawerOpen(false);
-    };
-
-    const getTurmas = async () => {
+    const getTurmasArquivadas = async () => {
         const emailProfessor = localStorage.getItem("email")
         let idProfessor
-        /////
-        await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
-            .then(function (response) {
-                idProfessor = response.data.id
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-        await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
-            .then(function (response) {
-                setTurmas([...turmas, response.data]);
-                setNome('');
-                setDialogOpen(false);
-            })
-            .catch(function (error) {
-                console.error('Erro ao pegar turma:', error);
-            });
+
+        try {
+            const teacherResponse = await axios.get(`http://localhost:8080/teachers/getByEmail/${emailProfessor}`)
+            idProfessor = teacherResponse.data.id
+
+            const turmasResponse = await axios.get(`http://localhost:8080/classrooms/prof/${idProfessor}`)
+            const turmasArquivadas = turmasResponse.data.filter(turma => turma.isArchived)
+
+            setArchivedTurmas(turmasArquivadas)
+        } catch (error) {
+            console.error('Erro ao obter turmas arquivadas:', error)
+        }
     }
 
     const handleSchoolIconClick = () => {
-        setShowTurmasList(!showTurmasList);
-    };
+        setShowTurmasList(!showTurmasList)
+    }
 
     const adicionarTurma = async () => {
         const emailProfessor = localStorage.getItem("email")
@@ -172,38 +165,38 @@ export function Arquivados() {
             name: nome,
             level: parseInt(serie),
             teacher: idProfessor
-        };
+        }
         axios.post('http://localhost:8080/classrooms', novaTurma)
             .then(response => {
-                setTurmas([...turmas, novaTurma]);
-                setNome('');
-                setSerie('');
-                setDialogOpen(false);
+                setTurmas([...turmas, novaTurma])
+                setNome('')
+                setSerie('')
+                setDialogOpen(false)
 
-                window.location.reload();
+                window.location.reload()
             })
             .catch(error => {
-                console.error('Erro ao adicionar turma:', error);
-            });
-    };
+                console.error('Erro ao adicionar turma:', error)
+            })
+    }
 
     const deletarTurma = async (classroom) => {
         try {
-            await axios.delete('http://localhost:8080/classrooms/' + classroom);
-            setTurmas(turmas.filter(turma => turma.id !== classroom));
+            await axios.delete('http://localhost:8080/classrooms/' + classroom)
+            setTurmas(turmas.filter(turma => turma.id !== classroom))
             navigate("/turmas")
         } catch (error) {
-            console.error('Erro ao deletar turma:', error);
+            console.error('Erro ao deletar turma:', error)
         }
-    };
+    }
 
     const handleMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
+        setAnchorEl(event.currentTarget)
+    }
 
     const handleClose = () => {
-        setAnchorEl(null);
-    };
+        setAnchorEl(null)
+    }
 
     const navigate = useNavigate()
 
@@ -217,18 +210,22 @@ export function Arquivados() {
     }
 
     const home = () => {
-        localStorage.removeItem('email');
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('email')
+        localStorage.removeItem('authToken')
         navigate("/")
     }
 
     const handleLogout = () => {
-        localStorage.removeItem('email');
+        localStorage.removeItem('email')
 
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('authToken')
 
-        navigate('/login');
-    };
+        navigate('/login')
+    }
+
+    const arquivados = () => {
+        navigate("/arquivados")
+    }
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -237,12 +234,10 @@ export function Arquivados() {
                 <Toolbar>
                     <IconButton
                         color="inherit"
-                        aria-label="open drawer"
-                        onClick={handleDrawerOpen}
+                        onClick={changeDrawerState}
                         edge="start"
                         sx={{
-                            marginRight: 5,
-                            ...(drawerOpen && { display: 'none' }),
+                            marginRight: 5
                         }}
                     >
                         <MenuIcon />
@@ -327,13 +322,7 @@ export function Arquivados() {
                 </Toolbar>
             </AppBar>
             <Drawer variant="permanent" open={drawerOpen}>
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
-                <List>
+                <List sx={{marginTop: '65px'}}>
                     {['Início', 'Agenda'].map((text, index) => (
                         <ListItem key={text} disablePadding sx={{ display: 'block' }}>
                             <ListItemButton
@@ -410,7 +399,7 @@ export function Arquivados() {
                                         justifyContent: 'center',
                                     }}
                                 >
-                                    {index % 2 === 0 ? <ArchiveIcon /> : <SettingsIcon />}
+                                    {index % 2 === 0 ? <ArchiveIcon onClick = {arquivados}/> : <SettingsIcon />}
                                 </ListItemIcon>
                                 <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
                             </ListItemButton>
@@ -421,36 +410,33 @@ export function Arquivados() {
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                    {turmas[0] !== undefined && (
-                        turmas[0].map((turma, index) => {
-                            return (
-                                <Card key={index} sx={{ width: 280, height: 180 }} onClick={() => aluno(turma.id)}>
-                                    <CardActionArea sx={{ backgroundColor: turma.color }}>
-                                        <CardContent>
-                                            <Typography
-                                                gutterBottom
-                                                variant="subtitle1"
-                                                component="div"
-                                                sx={{ height: 90, color: '#000000' }}
-                                            >
-                                                {turma.name}
-                                            </Typography>
-                                        </CardContent>
-                                    </CardActionArea>
-                                    <Divider />
-                                    <CardActions>
-                                        <IconButton color="inherit" onClick={() => deletarTurma(turma.id)}>
-                                            <DeleteIcon />
-                                        </IconButton>
-                                        <IconButton color="inherit">
-                                            <FolderOpenIcon />
-                                        </IconButton>
-                                    </CardActions>
-                                </Card>
-                            )
-                        })
-                    )}
+                    {archivedTurmas.map((turma) => (
+                        <Card key={turma.id} turma={turma} sx={{ width: 280, height: 180 }}>
+                            <CardActionArea sx={{ backgroundColor: turma.color }}>
+                                <CardContent>
+                                    <Typography
+                                        gutterBottom
+                                        variant="subtitle1"
+                                        component="div"
+                                        sx={{ height: 90, color: '#000000' }}
+                                    >
+                                        {turma.name}
+                                    </Typography>
+                                </CardContent>
+                            </CardActionArea>
+                            <Divider />
+                            <CardActions>
+                                <IconButton color="inherit" onClick={() => deletarTurma(turma.id)}>
+                                    <DeleteIcon />
+                                </IconButton>
+                                <IconButton color="inherit">
+                                    <FolderOpenIcon />
+                                </IconButton>
+                            </CardActions>
+                        </Card>
+                    ))}
                 </Box>
+
             </Box>
         </Box>
     );

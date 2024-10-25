@@ -69,21 +69,15 @@ const DrawerHeader = styled('div')(({ theme }) => ({
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
+})(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
+      duration: theme.transitions.duration.leavingScreen,
   }),
-}));
+  width: '100%',
+  position: 'fixed',
+}))
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -130,13 +124,9 @@ export function Alunos() {
     setAnchorEl(null);
   };
 
-  const handleDrawerOpen = () => {
-    setDrawerOpen(true);
+  const changeDrawerState = () => {
+    setDrawerOpen(!drawerOpen);
   };
-
-  const handleDrawerClose = () => {
-    setDrawerOpen(false);
-  }
 
   const adicionarAluno = async () => {
     const idClassroom = parseInt(localStorage.getItem("classId"));
@@ -263,6 +253,10 @@ export function Alunos() {
     navigate("/alunos")
   }
 
+  const arquivados = () => {
+    navigate("/arquivados")
+  }
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -270,12 +264,10 @@ export function Alunos() {
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            onClick={changeDrawerState}
             edge="start"
             sx={{
-              marginRight: 5,
-              ...(open && { display: 'none' }),
+                marginRight: 5
             }}
           >
             <MenuIcon />
@@ -371,13 +363,7 @@ export function Alunos() {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={drawerOpen}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
+        <List sx={{ marginTop: '65px' }}>
           {['Início', 'Agenda'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
@@ -438,7 +424,7 @@ export function Alunos() {
         </List>
         <Divider />
         <List>
-          {['Arquivos', 'Configurações'].map((text, index) => (
+          {['Arquivados', 'Configurações'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={{
@@ -454,7 +440,7 @@ export function Alunos() {
                     justifyContent: 'center',
                   }}
                 >
-                  {index % 2 === 0 ? <ArchiveIcon /> : <SettingsIcon />}
+                  {index % 2 === 0 ? <ArchiveIcon onClick={arquivados} /> : <SettingsIcon />}
                 </ListItemIcon>
                 <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
               </ListItemButton>

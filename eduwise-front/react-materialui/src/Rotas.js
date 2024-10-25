@@ -1,6 +1,6 @@
 import React from "react";
 import { Routes, Route, Router } from "react-router-dom";
-import { Turmas } from './Pages/Turmas.js'
+import { Turmas } from './Pages/Turmas/Turmas.js'
 import { Alunos } from './Pages/Alunos.js'
 import { Login } from "./Pages/Login/Login.js";
 import { Cadastrar } from "./Pages/Cadastrar/Cadastrar.js";
