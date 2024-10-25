@@ -186,6 +186,16 @@ export function Turmas() {
             });
     };
 
+    const deletarTurma = async (classroom) => {
+        try {
+            await axios.delete('http://localhost:8080/classrooms/' + classroom);
+            setTurmas(turmas.filter(turma => turma.id !== classroom));
+            navigate("/turmas")
+        } catch (error) {
+            console.error('Erro ao deletar turma:', error);
+        }
+    };
+
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -201,11 +211,11 @@ export function Turmas() {
         navigate("/alunos")
     }
 
-    const inicial = () =>{
+    const inicial = () => {
         navigate("/turmas")
     }
 
-    const home = () =>{
+    const home = () => {
         localStorage.removeItem('email');
         localStorage.removeItem('authToken');
         navigate("/")
@@ -236,7 +246,7 @@ export function Turmas() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={home}/>
+                    <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
                     <IconButton color='inherit' onClick={() => setDialogOpen(true)}>
                         <AddCardIcon />
@@ -428,7 +438,7 @@ export function Turmas() {
                                     </CardActionArea>
                                     <Divider />
                                     <CardActions>
-                                        <IconButton color="inherit">
+                                        <IconButton color="inherit" onClick={() => deletarTurma(turma.id)}>
                                             <DeleteIcon />
                                         </IconButton>
                                         <IconButton color="inherit">

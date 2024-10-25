@@ -475,6 +475,16 @@ export function IA() {
                         renderInput={(params) => <TextField {...params} label="Habilidades" />}
                     />
                 </Grid>
+                <Grid container spacing={2} style={{ marginTop: '20px', marginLeft: '0.1px' }}>
+                    <TextField
+                        id="outlined-multiline-flexible"
+                        label = "Recomendações"
+                        multiline
+                        rows={10}
+                        fullWidth
+                        style={{ width: '1020px' }} // Defina o valor que desejar
+                    />
+                </Grid>
             </Container>
         </div>
     )

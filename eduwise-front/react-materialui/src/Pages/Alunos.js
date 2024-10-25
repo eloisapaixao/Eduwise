@@ -145,7 +145,7 @@ export function Alunos() {
       email: emailAluno,
       birthday: birthday,
     }
-  
+
     try {
       const response = await axios.post(`http://localhost:8080/students/${idClassroom}`, student);
       console.log('Aluno adicionado com sucesso:', response.data);
@@ -156,7 +156,17 @@ export function Alunos() {
     } catch (error) {
       console.error('Erro ao adicionar aluno:', error);
     }
-  }  
+  }
+
+  const deletarAluno = async (student) => {
+    try {
+      await axios.delete('http://localhost:8080/students/' + student);
+      setTurmas(alunos.filter(aluno => aluno.id !== aluno));
+      window.location.reload();
+    } catch (error) {
+      console.error('Erro ao deletar aluno:', error);
+    }
+  };
 
   const handleBirthdayChange = (e) => {
     const value = e.target.value.replace(/\D/g, '')
@@ -204,7 +214,7 @@ export function Alunos() {
 
   const getAlunos = async () => {
     const idClassroom = localStorage.getItem("classId")
-    
+
     try {
       const response = await axios.get(`http://localhost:8080/students/getByClassroom/${idClassroom}`)
       setAlunos(response.data)
@@ -230,13 +240,13 @@ export function Alunos() {
     try {
       const response = await axios.get(`http://localhost:8080/classrooms/${idClassroom}`);
       const classroom = response.data;
-  
+
       navigate('/ia', { state: { nomeAluno: aluno, levelAluno: classroom.level } });
     } catch (error) {
       console.error('Erro ao carregar turma:', error);
     }
   };
-  
+
 
   const inicial = () => {
     navigate("/turmas")
@@ -469,9 +479,9 @@ export function Alunos() {
                   <ListItemButton onClick={() => handleAlunoClick(aluno.name)}>
                     <ListItemText primary={aluno.name} />
                   </ListItemButton>
-                  <Button>
+                  <IconButton color="inherit" onClick={() => deletarAluno(aluno.id)}>
                     <DeleteIcon />
-                  </Button>
+                  </IconButton>
                 </ListItem>
                 <Divider />
               </React.Fragment>
