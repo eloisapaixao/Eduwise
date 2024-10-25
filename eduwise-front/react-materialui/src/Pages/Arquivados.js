@@ -106,7 +106,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     }),
 );
 
-export function Turmas() {
+export function Arquivados() {
     const theme = useTheme();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -197,12 +197,6 @@ export function Turmas() {
         }
     };
 
-    const arquivarTurma = (classroom) => {
-        const turmaParaArquivar = turmas[0].find(turma => turma.id === classroom);
-        setArchivedTurmas([...archivedTurmas, turmaParaArquivar]);
-        setTurmas([turmas[0].filter(turma => turma.id !== classroom)]);
-    };
-
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
     };
@@ -226,10 +220,6 @@ export function Turmas() {
         localStorage.removeItem('email');
         localStorage.removeItem('authToken');
         navigate("/")
-    }
-
-    const arquivados = () => {
-        navigate("/arquivados")
     }
 
     const handleLogout = () => {
@@ -452,7 +442,7 @@ export function Turmas() {
                                         <IconButton color="inherit" onClick={() => deletarTurma(turma.id)}>
                                             <DeleteIcon />
                                         </IconButton>
-                                        <IconButton color="inherit" onClick={() => arquivarTurma(turma.id)}>
+                                        <IconButton color="inherit">
                                             <FolderOpenIcon />
                                         </IconButton>
                                     </CardActions>

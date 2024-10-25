@@ -6,6 +6,7 @@ import { Login } from "./Pages/Login/Login.js";
 import { Cadastrar } from "./Pages/Cadastrar/Cadastrar.js";
 import { Home } from "./Pages/Home/Home.js";
 import { IA } from "./Pages/IA/IA.js"
+import { Arquivados } from "./Pages/Arquivados.js";
 
 export default function Rotas() {
    return(
@@ -16,6 +17,7 @@ export default function Rotas() {
             <Route exact path='/login' element = {<Login/>} />
             <Route exact path='/cadastrar' element={<Cadastrar/>}/>
             <Route exact path='/ia' element={<IA/>} />
+            <Route exact path='/arquivados' element={<Arquivados/>} />
        </Routes>
    )
 }

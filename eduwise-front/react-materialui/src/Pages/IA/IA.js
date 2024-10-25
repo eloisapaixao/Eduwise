@@ -231,9 +231,6 @@ export function IA() {
     }
 
     const inicial = () => {
-        localStorage.removeItem('email');
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('id')
         navigate("/turmas")
     }
 
@@ -482,7 +479,8 @@ export function IA() {
                         multiline
                         rows={10}
                         fullWidth
-                        style={{ width: '1020px' }} // Defina o valor que desejar
+                        style={{ width: '1020px' }}
+                        defaultValue={'aaaaa'}
                     />
                 </Grid>
             </Container>
