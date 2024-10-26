@@ -108,6 +108,7 @@ export function IA() {
     const [selectedSubject, setSelectedSubject] = useState(null)
     const [selectedContent, setSelectedContent] = useState(null)
     const [selectedSubcontent, setSelectedSubcontent] = useState(null)
+    const [selectedSkill, setSelectedSkill] = useState(null)
     const location = useLocation()
     const { nomeAluno, levelAluno } = location.state || {}
 

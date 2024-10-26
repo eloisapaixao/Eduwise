@@ -154,10 +154,6 @@ export function Turmas() {
         navigate('/login');
     }
 
-    const handleOpenDialogDeletar = (classroom) => {
-        setDialogDeletarOpen(true);
-    }
-
     const getTurmas = async () => {
         const emailProfessor = localStorage.getItem("email")
         let idProfessor
@@ -241,6 +237,14 @@ export function Turmas() {
     const arquivados = () => {
         navigate('/arquivados')
     }
+
+    const colorPalette = [
+        '#FF4F4F',
+        '#5A6ABF',
+        '#62B05A',
+        '#F8A345',
+        '#E04DB6'
+    ];
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -448,8 +452,8 @@ export function Turmas() {
                     {turmas[0] !== undefined && (
                         turmas[0].map((turma, index) => {
                             return (
-                                <Card key={index} sx={{ width: 280, height: 180 }} onClick={() => aluno(turma.id)}>
-                                    <CardActionArea sx={{ backgroundColor: turma.color }}>
+                                <Card key={index} sx={{ width: 280, height: 180 }}>
+                                    <CardActionArea sx={{ backgroundColor: turma.color }} onClick={() => aluno(turma.id)} style={{ backgroundColor: colorPalette[index % colorPalette.length], color: '#fff' }}>
                                         <CardContent>
                                             <Typography
                                                 gutterBottom
@@ -463,7 +467,7 @@ export function Turmas() {
                                     </CardActionArea>
                                     <Divider />
                                     <CardActions>
-                                        <IconButton color="inherit" onClick={() => handleOpenDialogDeletar(turma.id)}>
+                                        <IconButton color="inherit" onClick={() => setDialogDeletarOpen(true)}>
                                             <Tooltip title="Deletar">
                                                 <DeleteIcon />
                                             </Tooltip>
@@ -471,7 +475,7 @@ export function Turmas() {
                                         <Dialog open={dialogDeletarOpen} onClose={() => setDialogDeletarOpen(false)}>
                                             <DialogTitle>Confirmar Deleção</DialogTitle>
                                             <DialogContent>
-                                                <Typography>Tem certeza de que deseja deletar esta turma?</Typography>
+                                                <Typography>Tem certeza de que deseja deletar {turma.name}?</Typography>
                                             </DialogContent>
                                             <DialogActions>
                                                 <Button onClick={() => setDialogDeletarOpen(false)} color="primary">
@@ -480,14 +484,15 @@ export function Turmas() {
                                                 <Button onClick={() => {
                                                     deletarTurma()
                                                     setDialogDeletarOpen(false)
-                                                }} color="primary">
+                                                }} color="secondary">
                                                     Deletar
                                                 </Button>
                                             </DialogActions>
                                         </Dialog>
-
                                         <IconButton color="inherit">
-                                            <FolderOpenIcon />
+                                            <Tooltip title="Arquivar">
+                                                <FolderOpenIcon />
+                                            </Tooltip>
                                         </IconButton>
                                     </CardActions>
                                 </Card>

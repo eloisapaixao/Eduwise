@@ -495,7 +495,7 @@ export function Alunos() {
             {alunos.map((aluno) => (
               <React.Fragment key={aluno.id}>
                 <ListItem>
-                  <ListItemButton onClick={() => setDialogAlunoOpen(true)}>
+                  <ListItemButton onClick={() => handleAlunoClick(aluno.name)}>
                     <ListItemText primary={aluno.name} />
                   </ListItemButton>
                   <IconButton color="inherit" onClick={() => setDialogDeletarOpen(true)}>
