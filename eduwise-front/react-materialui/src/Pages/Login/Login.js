@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import LOGIN_IMAGE from '/Users/u22127/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/Prototyping process-rafiki.png'
-import LOGO_IMAGE from '/Users/u22127/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/logo.png'
+import LOGIN_IMAGE from 'C:/Users/elois/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/Prototyping process-rafiki.png'
+import LOGO_IMAGE from 'C:/Users/elois/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/logo.png'
 import './Login.css'
 import { Container, Box, TextField, Button, Typography} from '@mui/material'
 import Stack from '@mui/material/Stack'
@@ -45,6 +45,12 @@ export function Login({ setLoggedInTeacherId }) {
         })
     }
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            logar()
+        }
+    }
+
     return(
         <div className="pagina-login">
             <div className='espaco-imagem-login'>
@@ -70,7 +76,7 @@ export function Login({ setLoggedInTeacherId }) {
                         Desfrute dos <b>recursos disponíveis!</b>
                     </Typography>
 
-                    <Box component="form" sx={{ width: '100%' }}>
+                    <Box component="form" sx={{ width: '100%' }} onKeyDown={handleKeyDown}>
                         <TextField 
                             id="standard-basic" 
                             label="Email" 
@@ -84,6 +90,7 @@ export function Login({ setLoggedInTeacherId }) {
                         />
                         <TextField 
                             id="standard-basic" 
+                            type='password'
                             label="Senha" 
                             variant="standard" 
                             fullWidth
@@ -102,13 +109,7 @@ export function Login({ setLoggedInTeacherId }) {
                             <Button variant="contained" sx={{ fontWeight: 'bold', backgroundColor: '#65469B', color: '#fff',  mt: 15, width: 300}} onClick={logar}>LOGAR</Button>
                             <Button variant="outlined" sx={{ fontWeight: 'bold', color: '#65469B', mt: 15, width: 300, borderColor: '#65469B'}} onClick={cadastrar}>REGISTRAR</Button>
                         </Stack>
-
                     </Box>
-                    <ButtonGroup variant="text" aria-label="text button group" align="left" color="secondary #65469B" sx={{mt: 15}}>
-                        <Button sx={{color: '#65469B'}} >Facebook</Button>
-                        <Button sx={{color: '#65469B'}}>Linkedin</Button>
-                        <Button sx={{color: '#65469B'}}>Google</Button>
-                    </ButtonGroup>
                 </Box>
             </Container>
             <Snackbar 

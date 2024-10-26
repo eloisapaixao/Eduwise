@@ -6,7 +6,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, Divider } from '@mui/material';
+import { Button, Divider, Tooltip } from '@mui/material';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -72,8 +72,8 @@ const AppBar = styled(MuiAppBar, {
 })(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
   transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
+    easing: theme.transitions.easing.sharp,
+    duration: theme.transitions.duration.leavingScreen,
   }),
   width: '100%',
   position: 'fixed',
@@ -100,7 +100,8 @@ export function Alunos() {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogAlunoOpen, setDialogAlunoOpen] = useState(false);
+  const [dialogDeletarOpen, setDialogDeletarOpen] = useState(false);
   const [auth, setAuth] = useState(true);
   const [nome, setNome] = useState('');
   const [emailAluno, setEmailAluno] = useState('');
@@ -128,35 +129,17 @@ export function Alunos() {
     setDrawerOpen(!drawerOpen);
   };
 
-  const adicionarAluno = async () => {
-    const idClassroom = parseInt(localStorage.getItem("classId"));
-    const student = {
-      name: nome,
-      email: emailAluno,
-      birthday: birthday,
-    }
-
-    try {
-      const response = await axios.post(`http://localhost:8080/students/${idClassroom}`, student);
-      console.log('Aluno adicionado com sucesso:', response.data);
-      setAlunos([...alunos, response.data]);
-      setDialogOpen(false);
-
-      window.location.reload();
-    } catch (error) {
-      console.error('Erro ao adicionar aluno:', error);
+  function handleDrawerOpen(event) {
+    if (anchorEl !== event.currentTarget) {
+      setDrawerOpen(true);
     }
   }
 
-  const deletarAluno = async (student) => {
-    try {
-      await axios.delete('http://localhost:8080/students/' + student);
-      setTurmas(alunos.filter(aluno => aluno.id !== aluno));
-      window.location.reload();
-    } catch (error) {
-      console.error('Erro ao deletar aluno:', error);
+  function handleDrawerClose(event) {
+    if (anchorEl !== event.currentTarget) {
+      setDrawerOpen(false);
     }
-  };
+  }
 
   const handleBirthdayChange = (e) => {
     const value = e.target.value.replace(/\D/g, '')
@@ -174,44 +157,6 @@ export function Alunos() {
 
     setBirthday(formattedValue);
   };
-
-  const navigate = useNavigate();
-  const ia = () => {
-    navigate('/ia')
-  };
-
-  const getTurmas = async () => {
-    const emailProfessor = localStorage.getItem("email")
-    let idProfessor
-    /////
-    await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
-      .then(function (response) {
-        idProfessor = response.data.id
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
-    await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
-      .then(function (response) {
-        setTurmas([...turmas, response.data]);
-        setNome('');
-        setDialogOpen(false);
-      })
-      .catch(function (error) {
-        console.error('Erro ao pegar turma:', error);
-      });
-  }
-
-  const getAlunos = async () => {
-    const idClassroom = localStorage.getItem("classId")
-
-    try {
-      const response = await axios.get(`http://localhost:8080/students/getByClassroom/${idClassroom}`)
-      setAlunos(response.data)
-    } catch (error) {
-      console.error('Erro ao carregar alunos:', error)
-    }
-  }
 
   const handleSchoolIconClick = () => {
     setShowTurmasList(!showTurmasList);
@@ -237,6 +182,76 @@ export function Alunos() {
     }
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      adicionarAluno()
+    }
+  }
+
+  const adicionarAluno = async () => {
+    const idClassroom = parseInt(localStorage.getItem("classId"));
+    const student = {
+      name: nome,
+      email: emailAluno,
+      birthday: birthday,
+    }
+
+    try {
+      const response = await axios.post(`http://localhost:8080/students/${idClassroom}`, student);
+      console.log('Aluno adicionado com sucesso:', response.data);
+      setAlunos([...alunos, response.data]);
+      setDialogAlunoOpen(false);
+
+      window.location.reload();
+    } catch (error) {
+      console.error('Erro ao adicionar aluno:', error);
+    }
+  }
+
+  const deletarAluno = async (student) => {
+    try {
+      await axios.delete('http://localhost:8080/students/' + student);
+      setTurmas(alunos.filter(aluno => aluno.id !== aluno));
+      window.location.reload();
+    } catch (error) {
+      console.error('Erro ao deletar aluno:', error);
+    }
+  };
+
+  const getTurmas = async () => {
+    const emailProfessor = localStorage.getItem("email")
+    let idProfessor
+    /////
+    await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
+      .then(function (response) {
+        idProfessor = response.data.id
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
+    await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
+      .then(function (response) {
+        setTurmas([...turmas, response.data]);
+        setNome('');
+        setDialogAlunoOpen(false);
+      })
+      .catch(function (error) {
+        console.error('Erro ao pegar turma:', error);
+      });
+  }
+
+  const getAlunos = async () => {
+    const idClassroom = localStorage.getItem("classId")
+
+    try {
+      const response = await axios.get(`http://localhost:8080/students/getByClassroom/${idClassroom}`)
+      setAlunos(response.data)
+    } catch (error) {
+      console.error('Erro ao carregar alunos:', error)
+    }
+  }
+
+  const navigate = useNavigate();
 
   const inicial = () => {
     navigate("/turmas")
@@ -267,7 +282,7 @@ export function Alunos() {
             onClick={changeDrawerState}
             edge="start"
             sx={{
-                marginRight: 5
+              marginRight: 5
             }}
           >
             <MenuIcon />
@@ -275,10 +290,12 @@ export function Alunos() {
 
           <img src='/images/logo.png' alt='logo /' style={{ height: 30, }} onClick={home} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
-          <IconButton color='inherit' onClick={() => setDialogOpen(true)}>
-            <PersonAddAlt1Icon />
+          <IconButton color='inherit' onClick={() => setDialogAlunoOpen(true)}>
+            <Tooltip title="Adicionar Aluno">
+              <PersonAddAlt1Icon />
+            </Tooltip>
           </IconButton>
-          <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+          <Dialog open={dialogAlunoOpen} onClose={() => setDialogAlunoOpen(false)} onKeyDown={handleKeyDown}>
             <DialogContent sx={{ height: 500, width: 500 }}>
               <DialogTitle variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#65469B' }}>
                 CRIE UM ALUNO
@@ -317,7 +334,7 @@ export function Alunos() {
               />
             </DialogContent>
             <DialogActions>
-              <Button onClick={() => setDialogOpen(false)} sx={{ color: '#65469B' }}>
+              <Button onClick={() => setDialogAlunoOpen(false)} sx={{ color: '#65469B' }}>
                 Cancelar
               </Button>
               <Button onClick={adicionarAluno} sx={{ color: '#65469B' }}>
@@ -325,9 +342,6 @@ export function Alunos() {
               </Button>
             </DialogActions>
           </Dialog>
-          <IconButton color='inherit'>
-            <AppsIcon />
-          </IconButton>
           {auth && (
             <div>
               <IconButton
@@ -335,7 +349,7 @@ export function Alunos() {
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"
-                onClick={handleMenu}
+                onMouseMove={handleMenu}
                 color="inherit"
               >
                 <AccountCircle />
@@ -355,37 +369,36 @@ export function Alunos() {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem >Profile</MenuItem>
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
               </Menu>
             </div>
           )}
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={drawerOpen}>
+      <Drawer variant="permanent" open={drawerOpen} onMouseMove={handleDrawerOpen} onMouseLeave={handleDrawerClose}>
         <List sx={{ marginTop: '65px' }}>
-          {['Início', 'Agenda'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: drawerOpen ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              onClick={inicial}
+            >
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: drawerOpen ? 'initial' : 'center',
-                  px: 2.5,
+                  minWidth: 0,
+                  mr: drawerOpen ? 3 : 'auto',
+                  justifyContent: 'center',
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: drawerOpen ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {index % 2 === 0 ? <HomeIcon onClick={inicial} /> : <TodayIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+                <HomeIcon />
+              </ListItemIcon>
+              <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }} >Início</ListItemText>
+            </ListItemButton>
+          </ListItem>
         </List>
         <Divider />
         <List>
@@ -424,28 +437,48 @@ export function Alunos() {
         </List>
         <Divider />
         <List>
-          {['Arquivados', 'Configurações'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: drawerOpen ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              onClick={arquivados}
+            >
+              <ListItemIcon
                 sx={{
-                  minHeight: 48,
-                  justifyContent: drawerOpen ? 'initial' : 'center',
-                  px: 2.5,
+                  minWidth: 0,
+                  mr: drawerOpen ? 3 : 'auto',
+                  justifyContent: 'center',
                 }}
               >
-                <ListItemIcon
-                  sx={{
-                    minWidth: 0,
-                    mr: drawerOpen ? 3 : 'auto',
-                    justifyContent: 'center',
-                  }}
-                >
-                  {index % 2 === 0 ? <ArchiveIcon onClick={arquivados} /> : <SettingsIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+                <ArchiveIcon />
+              </ListItemIcon>
+              <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Arquivados</ListItemText>
+            </ListItemButton>
+          </ListItem>
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <ListItemButton
+              sx={{
+                minHeight: 48,
+                justifyContent: drawerOpen ? 'initial' : 'center',
+                px: 2.5,
+              }}
+              onClick={inicial}
+            >
+              <ListItemIcon
+                sx={{
+                  minWidth: 0,
+                  mr: drawerOpen ? 3 : 'auto',
+                  justifyContent: 'center',
+                }}
+              >
+                <SettingsIcon />
+              </ListItemIcon>
+              <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Configurações</ListItemText>
+            </ListItemButton>
+          </ListItem>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -462,12 +495,31 @@ export function Alunos() {
             {alunos.map((aluno) => (
               <React.Fragment key={aluno.id}>
                 <ListItem>
-                  <ListItemButton onClick={() => handleAlunoClick(aluno.name)}>
+                  <ListItemButton onClick={() => setDialogAlunoOpen(true)}>
                     <ListItemText primary={aluno.name} />
                   </ListItemButton>
-                  <IconButton color="inherit" onClick={() => deletarAluno(aluno.id)}>
-                    <DeleteIcon />
+                  <IconButton color="inherit" onClick={() => setDialogDeletarOpen(true)}>
+                    <Tooltip title="Deletar">
+                      <DeleteIcon />
+                    </Tooltip>
                   </IconButton>
+                  <Dialog
+                    open={dialogDeletarOpen}
+                    onClose={() => setDialogDeletarOpen(false)}
+                  >
+                    <DialogTitle>Confirmar Deleção</DialogTitle>
+                    <DialogContent>
+                      Tem certeza de que deseja deletar o(a) aluno(a) {aluno.name}?
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={() => setDialogDeletarOpen(false)} color="primary">
+                        Cancelar
+                      </Button>
+                      <Button onClick={() => deletarAluno()} color="secondary">
+                        Deletar
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
                 </ListItem>
                 <Divider />
               </React.Fragment>

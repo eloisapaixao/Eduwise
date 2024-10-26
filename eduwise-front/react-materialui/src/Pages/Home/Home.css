@@ -14,11 +14,6 @@ body{
     background-color: #FFFFFF;
 }
 
-section,
-footer{
-    padding: 54px 0;
-}
-
 h3{
     font-size: 50px;
 }
@@ -175,6 +170,7 @@ nav img{
     color: #420176;
     letter-spacing: 2px;
     font-family: "Staatliches", sans-serif;
+    margin-top: 50px;
 }
 
 .container > p {
@@ -294,6 +290,7 @@ nav img{
 .footer {
     background-color: #848484;
     color: #FFFFFF;
+    padding: 54px;
 }
 
 .footer .p1{

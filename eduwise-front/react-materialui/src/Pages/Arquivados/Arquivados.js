@@ -11,8 +11,6 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -113,20 +111,47 @@ export function Arquivados() {
     const [archivedTurmas, setArchivedTurmas] = useState([])
 
     useEffect(() => {
-        const storedArchivedTurmas = localStorage.getItem('archivedTurmas');
-        let turmasArray = []
-        if (storedArchivedTurmas) {
-            turmasArray = JSON.parse(storedArchivedTurmas);
-            setArchivedTurmas(turmasArray);
-        } else {
-            getTurmasArquivadas();
-        }
-        //getTurmasArquivadas()
+        getTurmasArquivadas()
+        getTurmas()
     }, [])
 
     const changeDrawerState = () => {
         setDrawerOpen(!drawerOpen);
     };
+
+    function handleDrawerOpen(event) {
+        if (anchorEl !== event.currentTarget) {
+            setDrawerOpen(true);
+        }
+    }
+
+    function handleDrawerClose(event) {
+        if (anchorEl !== event.currentTarget) {
+            setDrawerOpen(false);
+        }
+    }
+
+    const getTurmas = async () => {
+        const emailProfessor = localStorage.getItem("email")
+        let idProfessor
+        /////
+        await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
+            .then(function (response) {
+                idProfessor = response.data.id
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
+        await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
+            .then(function (response) {
+                setTurmas([...turmas, response.data]);
+                setNome('');
+                setDialogOpen(false);
+            })
+            .catch(function (error) {
+                console.error('Erro ao pegar turma:', error);
+            });
+    }
 
     const getTurmasArquivadas = async () => {
         const emailProfessor = localStorage.getItem("email")
@@ -147,37 +172,6 @@ export function Arquivados() {
 
     const handleSchoolIconClick = () => {
         setShowTurmasList(!showTurmasList)
-    }
-
-    const adicionarTurma = async () => {
-        const emailProfessor = localStorage.getItem("email")
-        let idProfessor
-        /////
-        await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
-            .then(function (response) {
-                idProfessor = response.data.id
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-        ////
-        const novaTurma = {
-            name: nome,
-            level: parseInt(serie),
-            teacher: idProfessor
-        }
-        axios.post('http://localhost:8080/classrooms', novaTurma)
-            .then(response => {
-                setTurmas([...turmas, novaTurma])
-                setNome('')
-                setSerie('')
-                setDialogOpen(false)
-
-                window.location.reload()
-            })
-            .catch(error => {
-                console.error('Erro ao adicionar turma:', error)
-            })
     }
 
     const deletarTurma = async (classroom) => {
@@ -244,49 +238,6 @@ export function Arquivados() {
                     </IconButton>
                     <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
-                    <IconButton color='inherit' onClick={() => setDialogOpen(true)}>
-                        <AddCardIcon />
-                    </IconButton>
-                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-                        <DialogContent sx={{ height: 400, width: 500 }}>
-                            <DialogTitle variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#65469B' }}>
-                                CRIE UMA TURMA
-                            </DialogTitle>
-                            <Typography variant="body1" gutterBottom sx={{ color: '#848484', mt: -1, fontSize: 20 }}>
-                                <b>Dados da turma</b>
-                            </Typography>
-                            <Divider color='#848484' sx={{ width: 450, mt: -1, borderBottomWidth: '3px' }} />
-                            <TextField
-                                label="Nome da turma"
-                                variant="standard"
-                                margin="normal"
-                                required
-                                sx={{ backgroundColor: '#fff', width: 400, marginLeft: 3 }}
-                                value={nome}
-                                onChange={(e) => setNome(e.target.value)}
-                            />
-                            <TextField
-                                label="Série ou ano da turma (somente o número)"
-                                variant="standard"
-                                margin="normal"
-                                required
-                                sx={{ backgroundColor: '#fff', width: 400, marginLeft: 3, mt: 1 }}
-                                value={serie}
-                                onChange={(e) => setSerie(e.target.value)}
-                            />
-                        </DialogContent>
-                        <DialogActions>
-                            <Button onClick={() => setDialogOpen(false)} sx={{ color: '#65469B' }}>
-                                Cancelar
-                            </Button>
-                            <Button onClick={adicionarTurma} sx={{ color: '#65469B' }}>
-                                Criar
-                            </Button>
-                        </DialogActions>
-                    </Dialog>
-                    <IconButton color='inherit'>
-                        <AppsIcon />
-                    </IconButton>
                     {auth && (
                         <div>
                             <IconButton
@@ -321,30 +272,29 @@ export function Arquivados() {
                     )}
                 </Toolbar>
             </AppBar>
-            <Drawer variant="permanent" open={drawerOpen}>
-                <List sx={{marginTop: '65px'}}>
-                    {['Início', 'Agenda'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
+            <Drawer variant="permanent" open={drawerOpen} onMouseMove={handleDrawerOpen} onMouseLeave={handleDrawerClose}>
+                <List sx={{ marginTop: '65px' }}>
+                    <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: drawerOpen ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                            onClick={inicial}
+                        >
+                            <ListItemIcon
                                 sx={{
-                                    minHeight: 48,
-                                    justifyContent: drawerOpen ? 'initial' : 'center',
-                                    px: 2.5,
+                                    minWidth: 0,
+                                    mr: drawerOpen ? 3 : 'auto',
+                                    justifyContent: 'center',
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: drawerOpen ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {index % 2 === 0 ? <HomeIcon onClick={inicial} /> : <TodayIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                                <HomeIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }} >Início</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
                 </List>
                 <Divider />
                 <List>
@@ -383,28 +333,48 @@ export function Arquivados() {
                 </List>
                 <Divider />
                 <List>
-                    {['Arquivados', 'Configurações'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
+                    <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: drawerOpen ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                            onClick={arquivados}
+                        >
+                            <ListItemIcon
                                 sx={{
-                                    minHeight: 48,
-                                    justifyContent: drawerOpen ? 'initial' : 'center',
-                                    px: 2.5,
+                                    minWidth: 0,
+                                    mr: drawerOpen ? 3 : 'auto',
+                                    justifyContent: 'center',
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: drawerOpen ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {index % 2 === 0 ? <ArchiveIcon onClick = {arquivados}/> : <SettingsIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                                <ArchiveIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Arquivados</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: drawerOpen ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                            onClick={inicial}
+                        >
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: drawerOpen ? 3 : 'auto',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <SettingsIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Configurações</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
                 </List>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

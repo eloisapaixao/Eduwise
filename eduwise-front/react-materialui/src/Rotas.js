@@ -1,12 +1,12 @@
 import React from "react";
 import { Routes, Route, Router } from "react-router-dom";
 import { Turmas } from './Pages/Turmas/Turmas.js'
-import { Alunos } from './Pages/Alunos.js'
+import { Alunos } from './Pages/Alunos/Alunos.js'
 import { Login } from "./Pages/Login/Login.js";
 import { Cadastrar } from "./Pages/Cadastrar/Cadastrar.js";
 import { Home } from "./Pages/Home/Home.js";
 import { IA } from "./Pages/IA/IA.js"
-import { Arquivados } from "./Pages/Arquivados.js";
+import { Arquivados } from "./Pages/Arquivados/Arquivados.js";
 
 export default function Rotas() {
    return(

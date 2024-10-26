@@ -17,10 +17,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ArchiveIcon from '@mui/icons-material/Archive';
-import AppsIcon from '@mui/icons-material/Apps';
 import SchoolIcon from '@mui/icons-material/School';
 import HomeIcon from '@mui/icons-material/Home';
-import TodayIcon from '@mui/icons-material/Today';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
@@ -29,7 +27,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { TextField, Button } from '@mui/material';
+import { TextField, Button, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -102,6 +100,7 @@ export function Turmas() {
     const theme = useTheme();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [dialogOpen, setDialogOpen] = useState(false);
+    const [dialogDeletarOpen, setDialogDeletarOpen] = useState(false);
     const [nome, setNome] = useState('');
     const [serie, setSerie] = useState('');
     const [turmas, setTurmas] = useState([]);
@@ -116,6 +115,48 @@ export function Turmas() {
     const changeDrawerState = () => {
         setDrawerOpen(!drawerOpen);
     };
+
+    function handleDrawerOpen(event) {
+        if (anchorEl !== event.currentTarget) {
+            setDrawerOpen(true);
+        }
+    }
+
+    function handleDrawerClose(event) {
+        if (anchorEl !== event.currentTarget) {
+            setDrawerOpen(false);
+        }
+    }
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            adicionarTurma()
+        }
+    }
+
+    const handleSchoolIcon = () => {
+        setShowTurmasList(!showTurmasList);
+    }
+
+    const handleMenu = (event) => {
+        setAnchorEl(event.currentTarget)
+    }
+
+    const handleClose = () => {
+        setAnchorEl(null)
+    }
+
+    const handleLogout = () => {
+        localStorage.removeItem('email');
+
+        localStorage.removeItem('authToken');
+
+        navigate('/login');
+    }
+
+    const handleOpenDialogDeletar = (classroom) => {
+        setDialogDeletarOpen(true);
+    }
 
     const getTurmas = async () => {
         const emailProfessor = localStorage.getItem("email")
@@ -138,10 +179,6 @@ export function Turmas() {
                 console.error('Erro ao pegar turma:', error);
             });
     }
-
-    const handleSchoolIconClick = () => {
-        setShowTurmasList(!showTurmasList);
-    };
 
     const adicionarTurma = async () => {
         const emailProfessor = localStorage.getItem("email")
@@ -184,14 +221,6 @@ export function Turmas() {
         }
     };
 
-    const handleMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
     const navigate = useNavigate()
 
     const aluno = (id) => {
@@ -209,13 +238,9 @@ export function Turmas() {
         navigate("/")
     }
 
-    const handleLogout = () => {
-        localStorage.removeItem('email');
-
-        localStorage.removeItem('authToken');
-
-        navigate('/login');
-    };
+    const arquivados = () => {
+        navigate('/arquivados')
+    }
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -237,9 +262,11 @@ export function Turmas() {
                     <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
                     <IconButton color='inherit' onClick={() => setDialogOpen(true)}>
-                        <AddCardIcon />
+                        <Tooltip title="Criar Turma">
+                            <AddCardIcon />
+                        </Tooltip>
                     </IconButton>
-                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+                    <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)} onKeyDown={handleKeyDown}>
                         <DialogContent sx={{ height: 400, width: 500 }}>
                             <DialogTitle variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#65469B' }}>
                                 CRIE UMA TURMA
@@ -276,9 +303,6 @@ export function Turmas() {
                             </Button>
                         </DialogActions>
                     </Dialog>
-                    <IconButton color='inherit'>
-                        <AppsIcon />
-                    </IconButton>
                     {auth && (
                         <div>
                             <IconButton
@@ -286,7 +310,7 @@ export function Turmas() {
                                 aria-label="account of current user"
                                 aria-controls="menu-appbar"
                                 aria-haspopup="true"
-                                onClick={handleMenu}
+                                onMouseMove={handleMenu}
                                 color="inherit"
                             >
                                 <AccountCircle />
@@ -306,37 +330,36 @@ export function Turmas() {
                                 open={Boolean(anchorEl)}
                                 onClose={handleClose}
                             >
-                                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                                <MenuItem>Profile</MenuItem>
                                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
                             </Menu>
                         </div>
                     )}
                 </Toolbar>
             </AppBar>
-            <Drawer variant="permanent" open={drawerOpen}>
-                <List  sx={{marginTop: '65px'}}>
-                    {['Início', 'Agenda'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
+            <Drawer variant="permanent" open={drawerOpen} onMouseMove={handleDrawerOpen} onMouseLeave={handleDrawerClose}>
+                <List sx={{ marginTop: '65px' }}>
+                    <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: drawerOpen ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                            onClick={inicial}
+                        >
+                            <ListItemIcon
                                 sx={{
-                                    minHeight: 48,
-                                    justifyContent: drawerOpen ? 'initial' : 'center',
-                                    px: 2.5,
+                                    minWidth: 0,
+                                    mr: drawerOpen ? 3 : 'auto',
+                                    justifyContent: 'center',
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: drawerOpen ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {index % 2 === 0 ? <HomeIcon onClick={inicial} /> : <TodayIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                                <HomeIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }} >Início</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
                 </List>
                 <Divider />
                 <List>
@@ -347,7 +370,7 @@ export function Turmas() {
                                 justifyContent: drawerOpen ? 'initial' : 'center',
                                 px: 2.5,
                             }}
-                            onClick={handleSchoolIconClick}
+                            onClick={handleSchoolIcon}
                         >
                             <ListItemIcon
                                 sx={{
@@ -375,28 +398,48 @@ export function Turmas() {
                 </List>
                 <Divider />
                 <List>
-                    {['Arquivos', 'Configurações'].map((text, index) => (
-                        <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                            <ListItemButton
+                    <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: drawerOpen ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                            onClick={arquivados}
+                        >
+                            <ListItemIcon
                                 sx={{
-                                    minHeight: 48,
-                                    justifyContent: drawerOpen ? 'initial' : 'center',
-                                    px: 2.5,
+                                    minWidth: 0,
+                                    mr: drawerOpen ? 3 : 'auto',
+                                    justifyContent: 'center',
                                 }}
                             >
-                                <ListItemIcon
-                                    sx={{
-                                        minWidth: 0,
-                                        mr: drawerOpen ? 3 : 'auto',
-                                        justifyContent: 'center',
-                                    }}
-                                >
-                                    {index % 2 === 0 ? <ArchiveIcon /> : <SettingsIcon />}
-                                </ListItemIcon>
-                                <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
-                            </ListItemButton>
-                        </ListItem>
-                    ))}
+                                <ArchiveIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Arquivados</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
+                    <ListItem disablePadding sx={{ display: 'block' }}>
+                        <ListItemButton
+                            sx={{
+                                minHeight: 48,
+                                justifyContent: drawerOpen ? 'initial' : 'center',
+                                px: 2.5,
+                            }}
+                            onClick={inicial}
+                        >
+                            <ListItemIcon
+                                sx={{
+                                    minWidth: 0,
+                                    mr: drawerOpen ? 3 : 'auto',
+                                    justifyContent: 'center',
+                                }}
+                            >
+                                <SettingsIcon />
+                            </ListItemIcon>
+                            <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Configurações</ListItemText>
+                        </ListItemButton>
+                    </ListItem>
                 </List>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -420,9 +463,29 @@ export function Turmas() {
                                     </CardActionArea>
                                     <Divider />
                                     <CardActions>
-                                        <IconButton color="inherit" onClick={() => deletarTurma(turma.id)}>
-                                            <DeleteIcon />
+                                        <IconButton color="inherit" onClick={() => handleOpenDialogDeletar(turma.id)}>
+                                            <Tooltip title="Deletar">
+                                                <DeleteIcon />
+                                            </Tooltip>
                                         </IconButton>
+                                        <Dialog open={dialogDeletarOpen} onClose={() => setDialogDeletarOpen(false)}>
+                                            <DialogTitle>Confirmar Deleção</DialogTitle>
+                                            <DialogContent>
+                                                <Typography>Tem certeza de que deseja deletar esta turma?</Typography>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={() => setDialogDeletarOpen(false)} color="primary">
+                                                    Cancelar
+                                                </Button>
+                                                <Button onClick={() => {
+                                                    deletarTurma()
+                                                    setDialogDeletarOpen(false)
+                                                }} color="primary">
+                                                    Deletar
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+
                                         <IconButton color="inherit">
                                             <FolderOpenIcon />
                                         </IconButton>

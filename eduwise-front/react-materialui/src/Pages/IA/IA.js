@@ -213,6 +213,18 @@ export function IA() {
         setAnchorEl(null);
     };
 
+    function handleDrawerOpen(event) {
+        if (anchorEl !== event.currentTarget) {
+            setDrawerOpen(true);
+        }
+    }
+
+    function handleDrawerClose(event) {
+        if (anchorEl !== event.currentTarget) {
+            setDrawerOpen(false);
+        }
+    }
+
     const navigate = useNavigate()
 
     const aluno = (id) => {
@@ -262,9 +274,6 @@ export function IA() {
                         </IconButton>
                         <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
-                        <IconButton color='inherit'>
-                            <AppsIcon />
-                        </IconButton>
                         {auth && (
                             <div>
                                 <IconButton
@@ -272,7 +281,7 @@ export function IA() {
                                     aria-label="account of current user"
                                     aria-controls="menu-appbar"
                                     aria-haspopup="true"
-                                    onClick={handleMenu}
+                                    onMouseMove={handleMenu}
                                     color="inherit"
                                 >
                                     <AccountCircle />
@@ -299,30 +308,29 @@ export function IA() {
                         )}
                     </Toolbar>
                 </AppBar>
-                <Drawer variant="permanent" open={drawerOpen}>
-                    <List sx={{marginTop: '65px'}}>
-                        {['Início', 'Agenda'].map((text, index) => (
-                            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                                <ListItemButton
+                <Drawer variant="permanent" open={drawerOpen} onMouseMove={handleDrawerOpen} onMouseLeave={handleDrawerClose}>
+                    <List sx={{ marginTop: '65px' }}>
+                        <ListItem disablePadding sx={{ display: 'block' }}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: drawerOpen ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                                onClick={inicial}
+                            >
+                                <ListItemIcon
                                     sx={{
-                                        minHeight: 48,
-                                        justifyContent: drawerOpen ? 'initial' : 'center',
-                                        px: 2.5,
+                                        minWidth: 0,
+                                        mr: drawerOpen ? 3 : 'auto',
+                                        justifyContent: 'center',
                                     }}
                                 >
-                                    <ListItemIcon
-                                        sx={{
-                                            minWidth: 0,
-                                            mr: drawerOpen ? 3 : 'auto',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        {index % 2 === 0 ? <HomeIcon onClick={inicial} /> : <TodayIcon />}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
+                                    <HomeIcon />
+                                </ListItemIcon>
+                                <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }} >Início</ListItemText>
+                            </ListItemButton>
+                        </ListItem>
                     </List>
                     <Divider />
                     <List>
@@ -361,28 +369,48 @@ export function IA() {
                     </List>
                     <Divider />
                     <List>
-                        {['Arquivados', 'Configurações'].map((text, index) => (
-                            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-                                <ListItemButton
+                        <ListItem disablePadding sx={{ display: 'block' }}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: drawerOpen ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                                onClick={arquivados}
+                            >
+                                <ListItemIcon
                                     sx={{
-                                        minHeight: 48,
-                                        justifyContent: drawerOpen ? 'initial' : 'center',
-                                        px: 2.5,
+                                        minWidth: 0,
+                                        mr: drawerOpen ? 3 : 'auto',
+                                        justifyContent: 'center',
                                     }}
                                 >
-                                    <ListItemIcon
-                                        sx={{
-                                            minWidth: 0,
-                                            mr: drawerOpen ? 3 : 'auto',
-                                            justifyContent: 'center',
-                                        }}
-                                    >
-                                        {index % 2 === 0 ? <ArchiveIcon onClick = {arquivados}/> : <SettingsIcon />}
-                                    </ListItemIcon>
-                                    <ListItemText primary={text} sx={{ opacity: drawerOpen ? 1 : 0 }} />
-                                </ListItemButton>
-                            </ListItem>
-                        ))}
+                                    <ArchiveIcon />
+                                </ListItemIcon>
+                                <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Arquivados</ListItemText>
+                            </ListItemButton>
+                        </ListItem>
+                        <ListItem disablePadding sx={{ display: 'block' }}>
+                            <ListItemButton
+                                sx={{
+                                    minHeight: 48,
+                                    justifyContent: drawerOpen ? 'initial' : 'center',
+                                    px: 2.5,
+                                }}
+                                onClick={inicial}
+                            >
+                                <ListItemIcon
+                                    sx={{
+                                        minWidth: 0,
+                                        mr: drawerOpen ? 3 : 'auto',
+                                        justifyContent: 'center',
+                                    }}
+                                >
+                                    <SettingsIcon />
+                                </ListItemIcon>
+                                <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Configurações</ListItemText>
+                            </ListItemButton>
+                        </ListItem>
                     </List>
                 </Drawer>
             </Box>
@@ -461,7 +489,7 @@ export function IA() {
                 <Grid container spacing={2} style={{ marginTop: '20px', marginLeft: '0.1px' }}>
                     <TextField
                         id="outlined-multiline-flexible"
-                        label = "Recomendações"
+                        label="Recomendações"
                         multiline
                         rows={10}
                         fullWidth

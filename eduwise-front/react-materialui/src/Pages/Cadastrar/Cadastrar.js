@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import LOGIN_IMAGE from '/Users/u22127/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/Prototyping process-rafiki.png'
-import LOGO_IMAGE from '/Users/u22127/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/logo.png'
+import LOGIN_IMAGE from 'C:/Users/elois/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/Prototyping process-rafiki.png'
+import LOGO_IMAGE from 'C:/Users/elois/Documents/GitHub/Eduwise/eduwise-front/react-materialui/src/Imagens/logo.png'
 import './Cadastrar.css'
 import { Container, Box, TextField, Button, Typography} from '@mui/material'
 import Stack from '@mui/material/Stack'
@@ -42,6 +42,12 @@ export function Cadastrar() {
         navigate("/login")
     }
 
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            registrar()
+        }
+    }
+
     return(
         <div className="pagina-login">
             <div className='espaco-imagem-login'>
@@ -67,7 +73,7 @@ export function Cadastrar() {
                         Se inscreva e desbloqueie acesso <b>exclusivo!</b>
                     </Typography>
 
-                    <Box component="form" sx={{ width: '100%' }}>
+                    <Box component="form" sx={{ width: '100%' }} onKeyDown={handleKeyDown}>
                         <TextField 
                             id="standard-basic" 
                             label="Seu Nome" 
@@ -123,11 +129,6 @@ export function Cadastrar() {
                             sx={{mt: 2}}
                         />
                     </Box>
-                    <ButtonGroup variant="text" aria-label="text button group" align="left" color="secondary #65469B" sx={{mt: 5}}>
-                        <Button sx={{color: '#65469B'}} >Facebook</Button>
-                        <Button sx={{color: '#65469B'}}>Linkedin</Button>
-                        <Button sx={{color: '#65469B'}}>Google</Button>
-                    </ButtonGroup>
                 </Box>
             </Container>
         </div>
