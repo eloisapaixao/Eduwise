@@ -5,6 +5,11 @@ import visitantes from "../../Imagens/People visiting history museum-bro.png"
 import instagram from "../../Imagens/instagram.png"
 import github from "../../Imagens/github.png"
 import linkedin from "../../Imagens/linkedin.png"
+import eloisa from "../../Imagens/eloisa.png"
+import leticia from "../../Imagens/leticia.png"
+import nycolle from "../../Imagens/nycolle.jpg"
+import padovan from "../../Imagens/padovan.jpg"
+
 
 
 function RolagemEquipe() {
@@ -79,7 +84,50 @@ export function Sobre() {
                             <div class="card-item">
                                 <div class="card-infos">
                                     <div>
-                                        <img src={visitantes} alt="" />
+                                        <img src={eloisa} alt="Eloisa" />
+                                        <p class="nome-user">Eloísa Paixão</p>
+                                    </div>
+                                    <div class="redes">
+                                        <div class="rede-user">
+                                            <div class="insta-icon">
+                                                <img src={instagram} alt="" />
+                                            </div>
+                                            <div class="separator"></div>
+                                            <div class="insta-user">
+                                                <p><a href="https://www.instagram.com/elo_paixaoo/">@elo_paixaoo</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="rede-user">
+                                            <div class="github-icon">
+                                                <img src={github} alt="" />
+                                            </div>
+                                            <div class="separator"></div>
+                                            <div class="github-user">
+                                            <p><a href="https://github.com/eloisapaixao">Eloisa Paixão</a></p>
+                                            </div>
+                                        </div>
+                                        <div class="rede-user">
+                                            <div class="in-icon">
+                                                <img src={linkedin} alt="" />
+                                            </div>
+                                            <div class="separator"></div>
+                                            <div class="in-user">
+                                            <p><a href="https://www.linkedin.com/in/eloisa-paix%C3%A3o-oliveira-230449276/">Eloisa Paixão Oliveira</a></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="comentario-user">
+                                Aqui é a Eloisa e estou super feliz por fazer parte dessa equipe maravilhosa! É uma oportunidade incrível 
+                                estar aprendendo e crescendo. Como responsável pelo banco de dados e API, estou animada para colaborar e 
+                                garantir que tudo funcione perfeitamente. Vamos criar soluções fantásticas!
+                                </p>
+                            </div>
+
+                            <div class="card-item">
+                                <div class="card-infos">
+                                    <div>
+                                        <img src={leticia} alt="Leticia" />
                                         <p class="nome-user">Letícia Fochi</p>
                                     </div>
                                     <div class="redes">
@@ -89,16 +137,16 @@ export function Sobre() {
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
-                                                <p><a href="">@lele_juliani</a></p>
+                                                <p><a href="https://www.instagram.com/lele_juliani/">@lele_juliani</a></p>
                                             </div>
                                         </div>
                                         <div class="rede-user">
-                                            <div class="in-icon">
+                                            <div class="github-icon">
                                                 <img src={github} alt="" />
                                             </div>
                                             <div class="separator"></div>
-                                            <div class="insta-user">
-                                                <p>@lele_juliani</p>
+                                            <div class="github-user">
+                                                <p><a href="https://github.com/lelejuliani">Letícia Fochi Juliani</a></p>
                                             </div>
                                         </div>
                                         <div class="rede-user">
@@ -106,21 +154,23 @@ export function Sobre() {
                                                 <img src={linkedin} alt="" />
                                             </div>
                                             <div class="separator"></div>
-                                            <div class="insta-user">
-                                                <p>@lele_juliani</p>
+                                            <div class="in-user">
+                                                <p><a href="https://www.linkedin.com/in/let%C3%ADcia-fochi-juliani-727a46328/">Letícia Fochi Juliani</a></p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <p class="comentario-user">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut finibus nulla, sit amet suscipit tellus.
+                                    Fala, pessoal! Sou a Letícia e estou muito feliz por integrar essa equipe maravilhosa! Ser responsável pela inteligência artificial 
+                                    é uma grande honra e uma oportunidade mutio legal na minha carreira. Estou ansiosa para continuar colaborando com a equipe, trocar 
+                                    ideias e trazer inovações que vão fazer a diferença. Juntos, podemos alcançar grandes conquistas!
                                 </p>
                             </div>
 
                             <div class="card-item">
                                 <div class="card-infos">
                                     <div>
-                                        <img src={visitantes} alt="" />
+                                        <img src={padovan} alt="Maria Eduarda" />
                                         <p class="nome-user">Maria Eduarda Padovan</p>
                                     </div>
                                     <div class="redes">
@@ -130,16 +180,16 @@ export function Sobre() {
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
-                                                <p><a href="">@maria_padovan</a></p>
+                                                <p><a href="https://www.instagram.com/padovsz/">@padovsz</a></p>
                                             </div>
                                         </div>
                                         <div class="rede-user">
-                                            <div class="in-icon">
+                                            <div class="github-icon">
                                                 <img src={github} alt="" />
                                             </div>
                                             <div class="separator"></div>
-                                            <div class="insta-user">
-                                                <p>@maria_padovan</p>
+                                            <div class="github-user">
+                                                <p><a href="https://github.com/padovsz">Madu Padovan</a></p>
                                             </div>
                                         </div>
                                         <div class="rede-user">
@@ -147,21 +197,23 @@ export function Sobre() {
                                                 <img src={linkedin} alt="" />
                                             </div>
                                             <div class="separator"></div>
-                                            <div class="insta-user">
-                                                <p>@maria_padovan</p>
+                                            <div class="in-user">
+                                                <p><a href="https://www.linkedin.com/in/maria-eduarda-padovan/">Maria Eduarda Padovan</a></p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <p class="comentario-user">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut finibus nulla, sit amet suscipit tellus.
+                                    Oi, galera! Sou a Maria Eduarda, responsável pelo front-end, e quero compartilhar que estou muito satisfeita em fazer parte deste time. 
+                                    Estou animada para continuar contribuindo com nosso trabalho, melhorando as interfaces e a experiência do usuário. Vamos seguir juntos
+                                    em busca de resultados excelentes!
                                 </p>
                             </div>
 
                             <div class="card-item">
                                 <div class="card-infos">
                                     <div>
-                                        <img src={visitantes} alt="" />
+                                        <img src={nycolle} alt="Nycolle" />
                                         <p class="nome-user">Nycolle Rodrigues</p>
                                     </div>
                                     <div class="redes">
@@ -171,16 +223,16 @@ export function Sobre() {
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
-                                                <p><a href="">@nycolle_rodrigues</a></p>
+                                                <p><a href="https://www.instagram.com/nycollero/">@nycollero</a></p>
                                             </div>
                                         </div>
                                         <div class="rede-user">
-                                            <div class="in-icon">
+                                            <div class="github-icon">
                                                 <img src={github} alt="" />
                                             </div>
                                             <div class="separator"></div>
-                                            <div class="insta-user">
-                                                <p>@nycolle_rodrigues</p>
+                                            <div class="github-user">
+                                                <p><a href="https://github.com/cc21258">Nycolle Rodrigues</a></p>
                                             </div>
                                         </div>
                                         <div class="rede-user">
@@ -188,55 +240,15 @@ export function Sobre() {
                                                 <img src={linkedin} alt="" />
                                             </div>
                                             <div class="separator"></div>
-                                            <div class="insta-user">
-                                                <p>@nycolle_rodrigues</p>
+                                            <div class="in-user">
+                                                <p><a href="https://www.linkedin.com/in/nycollero/">Nycolle Rodrigues</a></p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <p class="comentario-user">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut finibus nulla, sit amet suscipit tellus.
-                                </p>
-                            </div>
-
-                            <div class="card-item">
-                                <div class="card-infos">
-                                    <div>
-                                        <img src={visitantes} alt="" />
-                                        <p class="nome-user">Nycolle Rodrigues</p>
-                                    </div>
-                                    <div class="redes">
-                                        <div class="rede-user">
-                                            <div class="insta-icon">
-                                                <img src={instagram} alt="" />
-                                            </div>
-                                            <div class="separator"></div>
-                                            <div class="insta-user">
-                                                <p><a href="">@nycolle_rodrigues</a></p>
-                                            </div>
-                                        </div>
-                                        <div class="rede-user">
-                                            <div class="in-icon">
-                                                <img src={github} alt="" />
-                                            </div>
-                                            <div class="separator"></div>
-                                            <div class="insta-user">
-                                                <p>@nycolle_rodrigues</p>
-                                            </div>
-                                        </div>
-                                        <div class="rede-user">
-                                            <div class="in-icon">
-                                                <img src={linkedin} alt="" />
-                                            </div>
-                                            <div class="separator"></div>
-                                            <div class="insta-user">
-                                                <p>@nycolle_rodrigues</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <p class="comentario-user">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ut finibus nulla, sit amet suscipit tellus.
+                                    Sou a Nycolle, responsável por integrar todas as partes do nosso projeto. Estou feliz por fazer parte dessa equipe e continuar 
+                                    colaborando com as meninas. Vamos trabalhar juntos para garantir que tudo funcione em harmonia e que nossos objetivos sejam alcançados!
                                 </p>
                             </div>
                         </div>
