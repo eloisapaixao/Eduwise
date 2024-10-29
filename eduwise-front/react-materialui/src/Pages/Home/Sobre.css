@@ -1,0 +1,338 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Staatliches&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    outline: none;
+    font-family: "Roboto", sans-serif;
+}
+
+body{
+    background-color: #FFFFFF;
+}
+
+section,
+footer{
+    padding: 54px 0;
+}
+
+h3{
+    font-size: 50px;
+}
+
+p{
+    color:black
+}
+
+.container{
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 5%;
+}
+
+header {
+    background-image: url('../../Imagens/fundinho.jpeg');
+    background-position: center;
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 30px;
+}
+
+nav ul {
+    display: flex;
+    align-items: center;
+}
+
+nav ul a {
+    color: white;
+    margin: 0 25px;
+    text-transform: uppercase;
+    font-size: 14px;
+    display: block;
+}
+
+nav ul a:not(.btn)::after {
+    content: "";
+    background-color: #DF107F;
+    height: 3px;
+    width: 0%;
+    display: block;
+    margin: 0 auto;
+    transition: 0.3s;
+}
+
+nav ul a:hover::after{
+    width: 100%;
+}
+
+nav img{
+    height: 55px;
+}
+
+.btn{
+    background-color: #DF107F;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-block;
+    transition: 0.1s;
+}
+
+.btn:hover {
+    background-color: #8b0a4f;
+}
+
+.button{
+    position:relative;
+    display:inline-block;
+    margin:20px;
+  }
+  
+.button a{
+    color:white;
+    font-family:Helvetica, sans-serif;
+    font-weight:bold;
+    font-size:18px;
+    text-align: center;
+    text-decoration:none;
+    background-color:#DF107F;
+    display:block;
+    position:relative;
+    padding:20px 40px;
+    
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    text-shadow: 0px 1px 0px #000;
+    filter: dropshadow(color=#000, offx=0px, offy=1px);
+    
+    -webkit-box-shadow:inset 0 1px 0 #ff81c4, 0 10px 0 #8b0a4f;
+    -moz-box-shadow:inset 0 1px 0 #ff81c4, 0 10px 0 #8b0a4f;
+    box-shadow:inset 0 1px 0 #ff81c4, 0 10px 0 #8b0a4f;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+  
+.button a:active{
+    top:10px;
+    background-color:#DF107F;
+    
+    -webkit-box-shadow:inset 0 1px 0 #ff81c4, inset 0 -3px 0 #8b0a4f;
+    -moz-box-shadow:inset 0 1px 0 #ff81c4, inset 0 -3pxpx 0 #8b0a4f;
+    box-shadow:inset 0 1px 0 #ff81c4, inset 0 -3px 0 #8b0a4f;
+}
+  
+.button:after{
+    content:"";
+    height:100%;
+    width:100%;
+    padding:4px;
+    position: absolute;
+    bottom:-15px;
+    left:-4px;
+    z-index:-1;
+    background-color:#000000;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
+.banner {
+    display: flex;
+    justify-content: center;
+}
+
+.banner .banner-text{
+    margin: 150px;
+    text-align: center;
+    padding: 0 10px;
+}
+
+.banner .banner-text h1{ 
+    font-size: 70px;
+    color: white;
+    letter-spacing: 2px;
+    font-family: "Staatliches", sans-serif;
+}
+
+.banner .banner-text p{ 
+    font-size: 20px;
+    color: #ffffffb7;
+    font-weight: lighter;
+    margin: 30px 0;
+}
+
+.footer {
+    background-color: #848484;
+    color: #FFFFFF;
+}
+
+.footer .p1{
+    font-size: 11px;
+    color: #FFFFFF;
+    margin-top: 5px;
+}
+
+.footer .p2{
+    font-size: 14px;
+    color: #FFFFFF;
+    margin-top: 30px;
+}
+
+.footer .link img{
+    width: 100px;
+    margin: auto;
+    display: block;
+}
+
+.sobre-nos {
+    display: flex;
+    align-items: center;
+}
+
+.sobre-nos .sobre {
+    width: 50%;
+    padding: 0 40px;
+}
+
+.sobre-nos .sobre p{
+    margin: 20px 0 10px 0;
+    font-weight: 100;
+    color: #FFFFFF;
+}
+
+.sobre-nos h3{
+    color: #FFFFFF;
+    letter-spacing: 2px;
+    font-family: "Staatliches", sans-serif;
+}
+
+.sobre-nos .sobre-img img {
+    width: 60%;
+    margin: auto;
+    display: block;
+}
+
+.sobre-nos .sobre-img{
+    width: 50%;
+}
+
+.sobre-nos .sobre .botao-sobre {
+    border: solid 1px #FFFFFF;
+    width: 110px;
+    padding: 10px;
+    margin-top: 20px;
+    color: #FFFFFF;
+    background-color: transparent;
+    letter-spacing: 3px;
+    transition: background-color 0.5s ease, color 0.5s ease, transform 0.5s ease;
+}
+
+.sobre-nos .sobre .botao-sobre:hover{
+    background-color: #DF107F;
+    color: white;
+    cursor: pointer;
+    transform: scale(1.2)
+}
+
+.texto-justificado{
+    text-align: justify;
+}
+
+.equipe h3 {
+    text-align: center;
+    font-family: "Staatliches", sans-serif;
+}
+
+.equipe p {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; 
+    gap: 20px; 
+}
+
+.card-item {
+    width: 480px; 
+    height: auto; 
+    padding: 10px; 
+    margin: 10px; 
+    border-radius: 15px; 
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.5); 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-infos {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+
+.redes {
+    display: flex;
+    flex-direction: column;
+    margin-left: 50px; 
+}
+
+.equipe .card-item .card-text {
+    width: 60%;
+    display: flex;
+    align-items: center;
+}
+
+.equipe .card-item img{
+    border-radius: 100%;
+    width: 180px;
+    height: 180px;
+    display: block;
+    margin: 15px auto;
+}
+
+.equipe .card-item .rede-user {
+    display: flex;
+    justify-content: center;
+}
+
+.equipe .card-item .rede-user img{
+    width: 30px;
+    height: 30px;
+    border-radius: 5px;
+}
+
+.equipe .card-item .rede-user p{
+    display: block;
+    margin-top: 20px;
+}
+
+.equipe .card-item .rede-user .separator{
+    display: block;
+    width: 20px;
+}
+
+.equipe .card-item .nome-user {
+    font-weight: 600;
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+
+.equipe .card-item .comentario-user {
+    font-size: 15px;
+    padding: 0 10px;
+    font-weight: 300;
+}

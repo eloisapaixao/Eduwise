@@ -100,7 +100,7 @@ export function Home() {
                                 <img src={logo} alt="Logo" />
                             </a>
                             <ul class="ul">
-                                <a href="">Sobre Nós</a>
+                                <a href="/sobre">Sobre Nós</a>
                                 <a href="#servicos" onClick={RolagemServicos}>Serviços</a>
                                 <a href="#projeto" onClick={RolagemProjeto}>Projeto</a>
                                 <a href="#comunidade" onClick={RolagemComunidade}>Comunidade</a>
