@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import logo from "../../Imagens/eduwise.png"
 import visitantes from "../../Imagens/People visiting history museum-bro.png"
 import instagram from "../../Imagens/instagram.png"
-import whatsapp from "../../Imagens/whatsapp.png"
-import tiktok from "../../Imagens/tiktok.png"
+import github from "../../Imagens/github.png"
+import linkedin from "../../Imagens/linkedin.png"
 
 
 function RolagemEquipe() {
@@ -94,7 +94,7 @@ export function Sobre() {
                                         </div>
                                         <div class="rede-user">
                                             <div class="in-icon">
-                                                <img src={instagram} alt="" />
+                                                <img src={github} alt="" />
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
@@ -103,7 +103,7 @@ export function Sobre() {
                                         </div>
                                         <div class="rede-user">
                                             <div class="in-icon">
-                                                <img src={instagram} alt="" />
+                                                <img src={linkedin} alt="" />
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
@@ -135,7 +135,7 @@ export function Sobre() {
                                         </div>
                                         <div class="rede-user">
                                             <div class="in-icon">
-                                                <img src={instagram} alt="" />
+                                                <img src={github} alt="" />
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
@@ -144,7 +144,7 @@ export function Sobre() {
                                         </div>
                                         <div class="rede-user">
                                             <div class="in-icon">
-                                                <img src={instagram} alt="" />
+                                                <img src={linkedin} alt="" />
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
@@ -176,7 +176,7 @@ export function Sobre() {
                                         </div>
                                         <div class="rede-user">
                                             <div class="in-icon">
-                                                <img src={instagram} alt="" />
+                                                <img src={github} alt="" />
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
@@ -185,7 +185,7 @@ export function Sobre() {
                                         </div>
                                         <div class="rede-user">
                                             <div class="in-icon">
-                                                <img src={instagram} alt="" />
+                                                <img src={linkedin} alt="" />
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
@@ -217,7 +217,7 @@ export function Sobre() {
                                         </div>
                                         <div class="rede-user">
                                             <div class="in-icon">
-                                                <img src={instagram} alt="" />
+                                                <img src={github} alt="" />
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
@@ -226,7 +226,7 @@ export function Sobre() {
                                         </div>
                                         <div class="rede-user">
                                             <div class="in-icon">
-                                                <img src={instagram} alt="" />
+                                                <img src={linkedin} alt="" />
                                             </div>
                                             <div class="separator"></div>
                                             <div class="insta-user">
