@@ -49,13 +49,13 @@ Antes de começar, certifique-se de ter o seguinte instalado:
    npm install
 
 4. **Rodar o Projeto:**
-  Com todas as bibliotecas instaladas, agora só falta rodar o projeto em React (lembrar que deve estar na pasta <b>react-materialui<b>):
+  Com todas as bibliotecas instaladas, agora só falta rodar o projeto em React (lembrar que deve estar na pasta <b>react-materialui</b>):
    
    ```bash
    npm start
 
 ## 👾 Contribuidores
-A equipe <b>Ártemis Innovative Education<b> foi responsável por fazer com que esse projeto saísse do papel. Abaixo o perfil de todos os participantes:
+A equipe <b>Ártemis Innovative Education</b> foi responsável por fazer com que esse projeto saísse do papel. Abaixo o perfil de todos os participantes:
 
 <table align="center">
   <tr>
