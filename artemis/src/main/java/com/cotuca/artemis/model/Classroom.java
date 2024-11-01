@@ -28,4 +28,11 @@ public class Classroom {
     @ManyToOne
     @JoinColumn(name = "teacher_id")
     private Teacher teacher;
+
+    @Column
+    private Boolean isArchived = false;
+
+    public void setArchived(Boolean isArchived) {
+        this.isArchived = isArchived;
+    }
 }

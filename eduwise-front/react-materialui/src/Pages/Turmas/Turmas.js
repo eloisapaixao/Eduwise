@@ -97,23 +97,23 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export function Turmas() {
-    const theme = useTheme();
-    const [drawerOpen, setDrawerOpen] = useState(false);
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const [dialogDeletarOpen, setDialogDeletarOpen] = useState(false);
-    const [nome, setNome] = useState('');
-    const [serie, setSerie] = useState('');
-    const [turmas, setTurmas] = useState([]);
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [auth, setAuth] = useState(true);
-    const [showTurmasList, setShowTurmasList] = useState(false);
+    const theme = useTheme()
+    const [drawerOpen, setDrawerOpen] = useState(false)
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [dialogDeletarOpen, setDialogDeletarOpen] = useState(false)
+    const [nome, setNome] = useState('')
+    const [serie, setSerie] = useState('')
+    const [turmas, setTurmas] = useState([])
+    const [anchorEl, setAnchorEl] = useState(null)
+    const [auth, setAuth] = useState(true)
+    const [showTurmasList, setShowTurmasList] = useState(false)
 
     useEffect(() => {
-        getTurmas();
-    }, []);
+        getTurmas()
+    }, [])
 
     const changeDrawerState = () => {
-        setDrawerOpen(!drawerOpen);
+        setDrawerOpen(!drawerOpen)
     };
 
     function handleDrawerOpen(event) {
@@ -147,11 +147,11 @@ export function Turmas() {
     }
 
     const handleLogout = () => {
-        localStorage.removeItem('email');
+        localStorage.removeItem('email')
 
-        localStorage.removeItem('authToken');
+        localStorage.removeItem('authToken')
 
-        navigate('/login');
+        navigate('/login')
     }
 
     const getTurmas = async () => {
@@ -195,27 +195,47 @@ export function Turmas() {
         };
         axios.post('http://localhost:8080/classrooms', novaTurma)
             .then(response => {
-                setTurmas([...turmas, novaTurma]);
-                setNome('');
-                setSerie('');
-                setDialogOpen(false);
+                setTurmas([...turmas, novaTurma])
+                setNome('')
+                setSerie('')
+                setDialogOpen(false)
 
-                window.location.reload();
+                window.location.reload()
             })
             .catch(error => {
-                console.error('Erro ao adicionar turma:', error);
-            });
-    };
+                console.error('Erro ao adicionar turma:', error)
+            })
+    }
 
     const deletarTurma = async (classroom) => {
         try {
-            await axios.delete('http://localhost:8080/classrooms/' + classroom);
-            setTurmas(turmas.filter(turma => turma.id !== classroom));
+            await axios.delete('http://localhost:8080/classrooms/' + classroom)
+            setTurmas(turmas.filter(turma => turma.id !== classroom))
             navigate("/turmas")
         } catch (error) {
-            console.error('Erro ao deletar turma:', error);
+            console.error('Erro ao deletar turma:', error)
         }
-    };
+    }
+
+    const arquivarTurma = async (classroomId) => {
+        try {
+            const response = await axios.patch(`http://localhost:8080/classrooms/archive/${classroomId}`)
+            if (response.status === 200) {
+                setTurmas(prevTurmas => prevTurmas[0].filter(turma => turma.id !== classroomId))
+            } else {
+                console.error('Erro ao arquivar turma:', response.data)
+            }
+        } catch (error) {
+            if (error.response) {
+                console.error('Erro na resposta do servidor:', error.response.data)
+                console.error('Código de status:', error.response.status)
+            } else if (error.request) {
+                console.error('Nenhuma resposta recebida:', error.request)
+            } else {
+                console.error('Erro ao configurar a requisição:', error.message)
+            }
+        }
+    }        
 
     const navigate = useNavigate()
 
@@ -468,7 +488,7 @@ export function Turmas() {
                                                 </Button>
                                             </DialogActions>
                                         </Dialog>
-                                        <IconButton color="inherit">
+                                        <IconButton color="inherit" onClick={() => arquivarTurma(turma.id)}>
                                             <Tooltip title="Arquivar">
                                                 <FolderOpenIcon />
                                             </Tooltip>

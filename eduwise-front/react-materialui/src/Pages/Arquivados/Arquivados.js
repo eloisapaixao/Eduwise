@@ -95,7 +95,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export function Arquivados() {
-    const theme = useTheme()
     const [drawerOpen, setDrawerOpen] = useState(false)
     const [anchorEl, setAnchorEl] = useState(null)
     const [auth, setAuth] = useState(true)
@@ -103,14 +102,10 @@ export function Arquivados() {
     const [archivedTurmas, setArchivedTurmas] = useState([])
     const navigate = useNavigate()
     const [turmas, setTurmas] = useState([])
-    const [nome, setNome] = useState('')
-    const [dialogOpen, setDialogOpen] = useState(false)
     const [dialogDeletarOpen, setDialogDeletarOpen] = useState(false)
 
     useEffect(() => {
-        const storedArchivedTurmas = JSON.parse(localStorage.getItem('archivedTurmas')) || []
-        setArchivedTurmas(storedArchivedTurmas)
-        getTurmas()
+        getArchivedTurmas()
     }, [])
 
     const changeDrawerState = () => {
@@ -133,38 +128,18 @@ export function Arquivados() {
         setShowTurmasList(!showTurmasList)
     }
 
-    const handleDesarquivar = (turma) => {
-        const updatedArchivedTurmas = archivedTurmas.filter(t => t.id !== turma.id);
-        setArchivedTurmas(updatedArchivedTurmas);
-        localStorage.setItem('archivedTurmas', JSON.stringify(updatedArchivedTurmas));
-        const activeTurmas = JSON.parse(localStorage.getItem('activeTurmas')) || [];
-        const turmaExistente = activeTurmas.find(t => t.id === turma.id);
-        if (!turmaExistente) {
-            activeTurmas.push(turma);
-            localStorage.setItem('activeTurmas', JSON.stringify(activeTurmas));
-        }
-    }    
+    const getArchivedTurmas = async () => {
+        const emailProfessor = localStorage.getItem("email");
+        let idProfessor;
 
-    const getTurmas = async () => {
-        const emailProfessor = localStorage.getItem("email")
-        let idProfessor
-        /////
-        await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
-            .then(function (response) {
-                idProfessor = response.data.id
-            })
-            .catch(function (error) {
-                console.log(error)
-            })
-        await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
-            .then(function (response) {
-                setTurmas([...turmas, response.data])
-                setNome('')
-                setDialogOpen(false)
-            })
-            .catch(function (error) {
-                console.error('Erro ao pegar turma:', error)
-            })
+        try {
+            const response = await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
+            idProfessor = response.data.id
+            const archivedResponse = await axios.get(`http://localhost:8080/classrooms/archived/${idProfessor}`)
+            setArchivedTurmas(archivedResponse.data)
+        } catch (error) {
+            console.error('Erro ao obter turmas arquivadas:', error)
+        }
     }
 
     const deletarTurma = async (id) => {
@@ -381,7 +356,7 @@ export function Arquivados() {
                                         </DialogActions>
                                     </Dialog>
                                     <IconButton color="inherit">
-                                        <Tooltip title="Desarquivar" onClick={() => handleDesarquivar(turma)}>
+                                        <Tooltip title="Desarquivar">
                                             <FolderOpenIcon />
                                         </Tooltip>
                                     </IconButton>

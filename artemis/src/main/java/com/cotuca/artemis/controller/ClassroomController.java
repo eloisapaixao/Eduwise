@@ -4,6 +4,7 @@ import com.cotuca.artemis.model.*;
 import com.cotuca.artemis.repositories.ClassroomRepository;
 import com.cotuca.artemis.repositories.TeacherRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,8 +56,26 @@ public class ClassroomController {
         System.out.println(classroom.name());
         System.out.println(classroom.teacher());
         Teacher teacher = repositoryTeacher.findById(classroom.teacher()).orElse(null);
-        Classroom sala = new Classroom(0, classroom.name(), classroom.level(), teacher);
+        Classroom sala = new Classroom(0, classroom.name(), classroom.level(), teacher, false);
         return repository.save(sala);
+    }
+
+    @PatchMapping("/{id}/archive")
+    public ResponseEntity<String> archiveClassroom(@PathVariable Integer id) {
+        try {
+            Optional<Classroom> optionalClassroom = repository.findById(id);
+
+            if (optionalClassroom.isPresent()) {
+                Classroom existingClassroom = optionalClassroom.get();
+                existingClassroom.setArchived(true);
+                repository.save(existingClassroom);
+                return ResponseEntity.ok("Turma arquivada com sucesso.");
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erro ao arquivar a turma: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
