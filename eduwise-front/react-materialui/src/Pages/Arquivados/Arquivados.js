@@ -15,21 +15,17 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import SettingsIcon from '@mui/icons-material/Settings';
 import ArchiveIcon from '@mui/icons-material/Archive';
-import AppsIcon from '@mui/icons-material/Apps';
 import SchoolIcon from '@mui/icons-material/School';
 import HomeIcon from '@mui/icons-material/Home';
-import TodayIcon from '@mui/icons-material/Today';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
-import AddCardIcon from '@mui/icons-material/AddCard';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { TextField, Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -38,7 +34,7 @@ import FolderOpenIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom'
 
-const drawerWidth = 240
+const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
     width: drawerWidth,
@@ -47,7 +43,7 @@ const openedMixin = (theme) => ({
         duration: theme.transitions.duration.enteringScreen,
     }),
     overflowX: 'hidden',
-})
+});
 
 const closedMixin = (theme) => ({
     transition: theme.transitions.create('width', {
@@ -59,7 +55,7 @@ const closedMixin = (theme) => ({
     [theme.breakpoints.up('sm')]: {
         width: `calc(${theme.spacing(8)} + 1px)`,
     },
-})
+});
 
 const DrawerHeader = styled('div')(({ theme }) => ({
     display: 'flex',
@@ -67,7 +63,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 1),
     ...theme.mixins.toolbar,
-}))
+}));
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
@@ -79,7 +75,7 @@ const AppBar = styled(MuiAppBar, {
     }),
     width: '100%',
     position: 'fixed',
-}))
+}));
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -96,40 +92,58 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
             '& .MuiDrawer-paper': closedMixin(theme),
         }),
     }),
-)
+);
 
 export function Arquivados() {
     const theme = useTheme()
     const [drawerOpen, setDrawerOpen] = useState(false)
-    const [dialogOpen, setDialogOpen] = useState(false)
-    const [nome, setNome] = useState('')
-    const [serie, setSerie] = useState('')
-    const [turmas, setTurmas] = useState([])
     const [anchorEl, setAnchorEl] = useState(null)
     const [auth, setAuth] = useState(true)
     const [showTurmasList, setShowTurmasList] = useState(false)
     const [archivedTurmas, setArchivedTurmas] = useState([])
+    const navigate = useNavigate()
+    const [turmas, setTurmas] = useState([])
+    const [nome, setNome] = useState('')
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [dialogDeletarOpen, setDialogDeletarOpen] = useState(false)
 
     useEffect(() => {
-        getTurmasArquivadas()
+        const storedArchivedTurmas = JSON.parse(localStorage.getItem('archivedTurmas')) || []
+        setArchivedTurmas(storedArchivedTurmas)
         getTurmas()
     }, [])
 
     const changeDrawerState = () => {
-        setDrawerOpen(!drawerOpen);
-    };
+        setDrawerOpen(!drawerOpen)
+    }
 
     function handleDrawerOpen(event) {
         if (anchorEl !== event.currentTarget) {
-            setDrawerOpen(true);
+            setDrawerOpen(true)
         }
     }
 
     function handleDrawerClose(event) {
         if (anchorEl !== event.currentTarget) {
-            setDrawerOpen(false);
+            setDrawerOpen(false)
         }
     }
+
+    const handleSchoolIcon = () => {
+        setShowTurmasList(!showTurmasList)
+    }
+
+    const handleDesarquivar = (turma) => {
+        const updatedArchivedTurmas = archivedTurmas.filter(t => t.id !== turma.id);
+        setArchivedTurmas(updatedArchivedTurmas);
+        localStorage.setItem('archivedTurmas', JSON.stringify(updatedArchivedTurmas));
+        const activeTurmas = JSON.parse(localStorage.getItem('activeTurmas')) || [];
+        const turmaExistente = activeTurmas.find(t => t.id === turma.id);
+        if (!turmaExistente) {
+            activeTurmas.push(turma);
+            localStorage.setItem('activeTurmas', JSON.stringify(activeTurmas));
+        }
+    }    
 
     const getTurmas = async () => {
         const emailProfessor = localStorage.getItem("email")
@@ -144,41 +158,19 @@ export function Arquivados() {
             })
         await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
             .then(function (response) {
-                setTurmas([...turmas, response.data]);
-                setNome('');
-                setDialogOpen(false);
+                setTurmas([...turmas, response.data])
+                setNome('')
+                setDialogOpen(false)
             })
             .catch(function (error) {
-                console.error('Erro ao pegar turma:', error);
-            });
+                console.error('Erro ao pegar turma:', error)
+            })
     }
 
-    const getTurmasArquivadas = async () => {
-        const emailProfessor = localStorage.getItem("email")
-        let idProfessor
-
+    const deletarTurma = async (id) => {
         try {
-            const teacherResponse = await axios.get(`http://localhost:8080/teachers/getByEmail/${emailProfessor}`)
-            idProfessor = teacherResponse.data.id
-
-            const turmasResponse = await axios.get(`http://localhost:8080/classrooms/prof/${idProfessor}`)
-            const turmasArquivadas = turmasResponse.data.filter(turma => turma.isArchived)
-
-            setArchivedTurmas(turmasArquivadas)
-        } catch (error) {
-            console.error('Erro ao obter turmas arquivadas:', error)
-        }
-    }
-
-    const handleSchoolIconClick = () => {
-        setShowTurmasList(!showTurmasList)
-    }
-
-    const deletarTurma = async (classroom) => {
-        try {
-            await axios.delete('http://localhost:8080/classrooms/' + classroom)
-            setTurmas(turmas.filter(turma => turma.id !== classroom))
-            navigate("/turmas")
+            await axios.delete(`http://localhost:8080/classrooms/${id}`)
+            setArchivedTurmas(prevTurmas => prevTurmas.filter(turma => turma.id !== id))
         } catch (error) {
             console.error('Erro ao deletar turma:', error)
         }
@@ -192,34 +184,22 @@ export function Arquivados() {
         setAnchorEl(null)
     }
 
-    const navigate = useNavigate()
+    const navigateTo = (path) => {
+        navigate(path)
+    }
 
     const aluno = (id) => {
         localStorage.setItem("classId", id)
         navigate("/alunos")
     }
 
-    const inicial = () => {
-        navigate("/turmas")
-    }
-
-    const home = () => {
-        localStorage.removeItem('email')
-        localStorage.removeItem('authToken')
-        navigate("/")
-    }
-
-    const handleLogout = () => {
-        localStorage.removeItem('email')
-
-        localStorage.removeItem('authToken')
-
-        navigate('/login')
-    }
-
-    const arquivados = () => {
-        navigate("/arquivados")
-    }
+    const colorPalette = [
+        '#FF4F4F',
+        '#5A6ABF',
+        '#62B05A',
+        '#F8A345',
+        '#E04DB6'
+    ]
 
     return (
         <Box sx={{ display: 'flex' }}>
@@ -230,13 +210,11 @@ export function Arquivados() {
                         color="inherit"
                         onClick={changeDrawerState}
                         edge="start"
-                        sx={{
-                            marginRight: 5
-                        }}
+                        sx={{ marginRight: 5 }}
                     >
                         <MenuIcon />
                     </IconButton>
-                    <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
+                    <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={() => navigateTo("/")} />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
                     {auth && (
                         <div>
@@ -266,7 +244,11 @@ export function Arquivados() {
                                 onClose={handleClose}
                             >
                                 <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                <MenuItem onClick={() => {
+                                    localStorage.removeItem('email');
+                                    localStorage.removeItem('authToken');
+                                    navigateTo('/login');
+                                }}>Logout</MenuItem>
                             </Menu>
                         </div>
                     )}
@@ -281,7 +263,7 @@ export function Arquivados() {
                                 justifyContent: drawerOpen ? 'initial' : 'center',
                                 px: 2.5,
                             }}
-                            onClick={inicial}
+                            onClick={() => navigateTo("/turmas")}
                         >
                             <ListItemIcon
                                 sx={{
@@ -305,7 +287,7 @@ export function Arquivados() {
                                 justifyContent: drawerOpen ? 'initial' : 'center',
                                 px: 2.5,
                             }}
-                            onClick={handleSchoolIconClick}
+                            onClick={handleSchoolIcon}
                         >
                             <ListItemIcon
                                 sx={{
@@ -340,7 +322,7 @@ export function Arquivados() {
                                 justifyContent: drawerOpen ? 'initial' : 'center',
                                 px: 2.5,
                             }}
-                            onClick={arquivados}
+                            onClick={() => navigateTo("/arquivados")}
                         >
                             <ListItemIcon
                                 sx={{
@@ -354,59 +336,62 @@ export function Arquivados() {
                             <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Arquivados</ListItemText>
                         </ListItemButton>
                     </ListItem>
-                    <ListItem disablePadding sx={{ display: 'block' }}>
-                        <ListItemButton
-                            sx={{
-                                minHeight: 48,
-                                justifyContent: drawerOpen ? 'initial' : 'center',
-                                px: 2.5,
-                            }}
-                            onClick={inicial}
-                        >
-                            <ListItemIcon
-                                sx={{
-                                    minWidth: 0,
-                                    mr: drawerOpen ? 3 : 'auto',
-                                    justifyContent: 'center',
-                                }}
-                            >
-                                <SettingsIcon />
-                            </ListItemIcon>
-                            <ListItemText sx={{ opacity: drawerOpen ? 1 : 0 }}>Configurações</ListItemText>
-                        </ListItemButton>
-                    </ListItem>
                 </List>
             </Drawer>
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                    {archivedTurmas.map((turma) => (
-                        <Card key={turma.id} turma={turma} sx={{ width: 280, height: 180 }}>
-                            <CardActionArea sx={{ backgroundColor: turma.color }}>
-                                <CardContent>
-                                    <Typography
-                                        gutterBottom
-                                        variant="subtitle1"
-                                        component="div"
-                                        sx={{ height: 90, color: '#000000' }}
-                                    >
-                                        {turma.name}
-                                    </Typography>
-                                </CardContent>
-                            </CardActionArea>
-                            <Divider />
-                            <CardActions>
-                                <IconButton color="inherit" onClick={() => deletarTurma(turma.id)}>
-                                    <DeleteIcon />
-                                </IconButton>
-                                <IconButton color="inherit">
-                                    <FolderOpenIcon />
-                                </IconButton>
-                            </CardActions>
-                        </Card>
-                    ))}
+                    {archivedTurmas && archivedTurmas.length > 0 ? (
+                        archivedTurmas.map((turma) => (
+                            <Card key={turma.id} sx={{ width: 280, height: 180 }}>
+                                <CardActionArea sx={{ backgroundColor: turma.color }} onClick={() => aluno(turma.id)} style={{ backgroundColor: colorPalette[turma.id % colorPalette.length], color: '#fff' }}>
+                                    <CardContent>
+                                        <Typography
+                                            gutterBottom
+                                            variant="subtitle1"
+                                            component="div"
+                                            sx={{ height: 90, color: '#000000' }}
+                                        >
+                                            {turma.name}
+                                        </Typography>
+                                    </CardContent>
+                                </CardActionArea>
+                                <Divider />
+                                <CardActions>
+                                    <IconButton color="inherit" onClick={() => setDialogDeletarOpen(true)}>
+                                        <Tooltip title="Deletar">
+                                            <DeleteIcon />
+                                        </Tooltip>
+                                    </IconButton>
+                                    <Dialog open={dialogDeletarOpen} onClose={() => setDialogDeletarOpen(false)}>
+                                        <DialogTitle>Confirmar Deleção</DialogTitle>
+                                        <DialogContent>
+                                            <Typography>Tem certeza de que deseja deletar {turma.name}?</Typography>
+                                        </DialogContent>
+                                        <DialogActions>
+                                            <Button onClick={() => setDialogDeletarOpen(false)} color="primary">
+                                                Cancelar
+                                            </Button>
+                                            <Button onClick={() => {
+                                                deletarTurma()
+                                                setDialogDeletarOpen(false)
+                                            }} color="secondary">
+                                                Deletar
+                                            </Button>
+                                        </DialogActions>
+                                    </Dialog>
+                                    <IconButton color="inherit">
+                                        <Tooltip title="Desarquivar" onClick={() => handleDesarquivar(turma)}>
+                                            <FolderOpenIcon />
+                                        </Tooltip>
+                                    </IconButton>
+                                </CardActions>
+                            </Card>
+                        ))
+                    ) : (
+                        <Typography variant="h6">Nenhuma turma arquivada.</Typography>
+                    )}
                 </Box>
-
             </Box>
         </Box>
     );
