@@ -15,7 +15,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import SettingsIcon from '@mui/icons-material/Settings';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import SchoolIcon from '@mui/icons-material/School';
 import HomeIcon from '@mui/icons-material/Home';
@@ -167,7 +166,8 @@ export function Turmas() {
             })
         await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
             .then(function (response) {
-                setTurmas([...turmas, response.data]);
+                const turmasNaoArquivadas = response.data.filter(turma => turma.isArchived === false)
+                setTurmas([...turmas, turmasNaoArquivadas]);
                 setNome('');
                 setDialogOpen(false);
             })
@@ -211,7 +211,7 @@ export function Turmas() {
         try {
             await axios.delete('http://localhost:8080/classrooms/' + classroom)
             setTurmas(turmas.filter(turma => turma.id !== classroom))
-            navigate("/turmas")
+            window.location.reload();
         } catch (error) {
             console.error('Erro ao deletar turma:', error)
         }
@@ -219,12 +219,10 @@ export function Turmas() {
 
     const arquivarTurma = async (classroomId) => {
         try {
-            const response = await axios.patch(`http://localhost:8080/classrooms/archive/${classroomId}`)
-            if (response.status === 200) {
-                setTurmas(prevTurmas => prevTurmas[0].filter(turma => turma.id !== classroomId))
-            } else {
-                console.error('Erro ao arquivar turma:', response.data)
-            }
+            const response = await axios.put(`http://localhost:8080/classrooms/archive/${classroomId}`)
+
+            setTurmas(turmas.filter(turma => turma.id !== classroomId))
+            window.location.reload();
         } catch (error) {
             if (error.response) {
                 console.error('Erro na resposta do servidor:', error.response.data)
@@ -235,7 +233,7 @@ export function Turmas() {
                 console.error('Erro ao configurar a requisição:', error.message)
             }
         }
-    }        
+    }
 
     const navigate = useNavigate()
 
@@ -283,7 +281,7 @@ export function Turmas() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
+                    <img src='../../Imagens/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
                     <IconButton color='inherit' onClick={() => setDialogOpen(true)}>
                         <Tooltip title="Criar Turma">
@@ -481,7 +479,7 @@ export function Turmas() {
                                                     Cancelar
                                                 </Button>
                                                 <Button onClick={() => {
-                                                    deletarTurma()
+                                                    deletarTurma(turma.id)
                                                     setDialogDeletarOpen(false)
                                                 }} color="secondary">
                                                     Deletar

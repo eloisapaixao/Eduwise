@@ -21,11 +21,12 @@ import HomeIcon from '@mui/icons-material/Home';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
+import AddCardIcon from '@mui/icons-material/AddCard';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Button, Tooltip } from '@mui/material';
+import { TextField, Button, Tooltip } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -75,7 +76,7 @@ const AppBar = styled(MuiAppBar, {
     }),
     width: '100%',
     position: 'fixed',
-}));
+}))
 
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
@@ -95,60 +96,40 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export function Arquivados() {
+    const theme = useTheme()
     const [drawerOpen, setDrawerOpen] = useState(false)
+    const [dialogOpen, setDialogOpen] = useState(false)
+    const [dialogDeletarOpen, setDialogDeletarOpen] = useState(false)
+    const [nome, setNome] = useState('')
+    const [serie, setSerie] = useState('')
+    const [turmas, setTurmas] = useState([])
     const [anchorEl, setAnchorEl] = useState(null)
     const [auth, setAuth] = useState(true)
     const [showTurmasList, setShowTurmasList] = useState(false)
-    const [archivedTurmas, setArchivedTurmas] = useState([])
-    const navigate = useNavigate()
-    const [turmas, setTurmas] = useState([])
-    const [dialogDeletarOpen, setDialogDeletarOpen] = useState(false)
 
     useEffect(() => {
-        getArchivedTurmas()
+        getTurmas()
     }, [])
 
     const changeDrawerState = () => {
         setDrawerOpen(!drawerOpen)
-    }
+    };
 
     function handleDrawerOpen(event) {
         if (anchorEl !== event.currentTarget) {
-            setDrawerOpen(true)
+            setDrawerOpen(true);
         }
     }
 
     function handleDrawerClose(event) {
         if (anchorEl !== event.currentTarget) {
-            setDrawerOpen(false)
+            setDrawerOpen(false);
         }
     }
+
 
     const handleSchoolIcon = () => {
-        setShowTurmasList(!showTurmasList)
-    }
-
-    const getArchivedTurmas = async () => {
-        const emailProfessor = localStorage.getItem("email");
-        let idProfessor;
-
-        try {
-            const response = await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
-            idProfessor = response.data.id
-            const archivedResponse = await axios.get(`http://localhost:8080/classrooms/archived/${idProfessor}`)
-            setArchivedTurmas(archivedResponse.data)
-        } catch (error) {
-            console.error('Erro ao obter turmas arquivadas:', error)
-        }
-    }
-
-    const deletarTurma = async (id) => {
-        try {
-            await axios.delete(`http://localhost:8080/classrooms/${id}`)
-            setArchivedTurmas(prevTurmas => prevTurmas.filter(turma => turma.id !== id))
-        } catch (error) {
-            console.error('Erro ao deletar turma:', error)
-        }
+        setShowTurmasList(!showTurmasList);
     }
 
     const handleMenu = (event) => {
@@ -159,13 +140,85 @@ export function Arquivados() {
         setAnchorEl(null)
     }
 
-    const navigateTo = (path) => {
-        navigate(path)
+    const handleLogout = () => {
+        localStorage.removeItem('email')
+
+        localStorage.removeItem('authToken')
+
+        navigate('/login')
     }
+
+    const getTurmas = async () => {
+        const emailProfessor = localStorage.getItem("email")
+        let idProfessor
+        /////
+        await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
+            .then(function (response) {
+                idProfessor = response.data.id
+            })
+            .catch(function (error) {
+                console.log(error)
+            })
+        await axios.get('http://localhost:8080/classrooms/prof/' + idProfessor)
+            .then(function (response) {
+                const turmasArquivadas = response.data.filter(turma => turma.isArchived === true)
+                setTurmas([...turmas, turmasArquivadas]);
+                setNome('');
+                setDialogOpen(false);
+            })
+            .catch(function (error) {
+                console.error('Erro ao pegar turma:', error);
+            });
+    }
+
+
+    const deletarTurma = async (classroom) => {
+        try {
+            await axios.delete('http://localhost:8080/classrooms/' + classroom)
+            setTurmas(turmas.filter(turma => turma.id !== classroom))
+            window.location.reload();
+        } catch (error) {
+            console.error('Erro ao deletar turma:', error)
+        }
+    }
+
+    const desarquivarTurma = async (classroomId) => {
+        try {
+            const response = await axios.put(`http://localhost:8080/classrooms/unarchive/${classroomId}`)
+
+            setTurmas(turmas.filter(turma => turma.id !== classroomId))
+            window.location.reload();
+        } catch (error) {
+            if (error.response) {
+                console.error('Erro na resposta do servidor:', error.response.data)
+                console.error('Código de status:', error.response.status)
+            } else if (error.request) {
+                console.error('Nenhuma resposta recebida:', error.request)
+            } else {
+                console.error('Erro ao configurar a requisição:', error.message)
+            }
+        }
+    }
+
+    const navigate = useNavigate()
 
     const aluno = (id) => {
         localStorage.setItem("classId", id)
         navigate("/alunos")
+    }
+
+    const inicial = () => {
+        navigate("/turmas")
+    }
+
+    const home = () => {
+        localStorage.removeItem('email');
+        localStorage.removeItem('authToken');
+        navigate("/")
+    }
+
+    const arquivados = () => {
+        navigate('/arquivados')
     }
 
     const colorPalette = [
@@ -174,22 +227,26 @@ export function Arquivados() {
         '#62B05A',
         '#F8A345',
         '#E04DB6'
-    ]
+    ];
 
     return (
         <Box sx={{ display: 'flex' }}>
             <CssBaseline />
-            <AppBar position="fixed" open={drawerOpen} color='inherit'>
+            <AppBar position="fixed" color='inherit'>
                 <Toolbar>
                     <IconButton
                         color="inherit"
+                        aria-label="open drawer"
                         onClick={changeDrawerState}
-                        edge="start"
-                        sx={{ marginRight: 5 }}
+                        edge="end"
+                        sx={{
+                            marginRight: 5,
+                            marginLeft: '-10px'
+                        }}
                     >
                         <MenuIcon />
                     </IconButton>
-                    <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={() => navigateTo("/")} />
+                    <img src='../../Imagens/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
                     {auth && (
                         <div>
@@ -198,7 +255,7 @@ export function Arquivados() {
                                 aria-label="account of current user"
                                 aria-controls="menu-appbar"
                                 aria-haspopup="true"
-                                onClick={handleMenu}
+                                onMouseMove={handleMenu}
                                 color="inherit"
                             >
                                 <AccountCircle />
@@ -218,12 +275,8 @@ export function Arquivados() {
                                 open={Boolean(anchorEl)}
                                 onClose={handleClose}
                             >
-                                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                                <MenuItem onClick={() => {
-                                    localStorage.removeItem('email');
-                                    localStorage.removeItem('authToken');
-                                    navigateTo('/login');
-                                }}>Logout</MenuItem>
+                                <MenuItem>Profile</MenuItem>
+                                <MenuItem onClick={handleLogout}>Logout</MenuItem>
                             </Menu>
                         </div>
                     )}
@@ -238,7 +291,7 @@ export function Arquivados() {
                                 justifyContent: drawerOpen ? 'initial' : 'center',
                                 px: 2.5,
                             }}
-                            onClick={() => navigateTo("/turmas")}
+                            onClick={inicial}
                         >
                             <ListItemIcon
                                 sx={{
@@ -297,7 +350,7 @@ export function Arquivados() {
                                 justifyContent: drawerOpen ? 'initial' : 'center',
                                 px: 2.5,
                             }}
-                            onClick={() => navigateTo("/arquivados")}
+                            onClick={arquivados}
                         >
                             <ListItemIcon
                                 sx={{
@@ -316,55 +369,55 @@ export function Arquivados() {
             <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
                 <DrawerHeader />
                 <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                    {archivedTurmas && archivedTurmas.length > 0 ? (
-                        archivedTurmas.map((turma) => (
-                            <Card key={turma.id} sx={{ width: 280, height: 180 }}>
-                                <CardActionArea sx={{ backgroundColor: turma.color }} onClick={() => aluno(turma.id)} style={{ backgroundColor: colorPalette[turma.id % colorPalette.length], color: '#fff' }}>
-                                    <CardContent>
-                                        <Typography
-                                            gutterBottom
-                                            variant="subtitle1"
-                                            component="div"
-                                            sx={{ height: 90, color: '#000000' }}
-                                        >
-                                            {turma.name}
-                                        </Typography>
-                                    </CardContent>
-                                </CardActionArea>
-                                <Divider />
-                                <CardActions>
-                                    <IconButton color="inherit" onClick={() => setDialogDeletarOpen(true)}>
-                                        <Tooltip title="Deletar">
-                                            <DeleteIcon />
-                                        </Tooltip>
-                                    </IconButton>
-                                    <Dialog open={dialogDeletarOpen} onClose={() => setDialogDeletarOpen(false)}>
-                                        <DialogTitle>Confirmar Deleção</DialogTitle>
-                                        <DialogContent>
-                                            <Typography>Tem certeza de que deseja deletar {turma.name}?</Typography>
-                                        </DialogContent>
-                                        <DialogActions>
-                                            <Button onClick={() => setDialogDeletarOpen(false)} color="primary">
-                                                Cancelar
-                                            </Button>
-                                            <Button onClick={() => {
-                                                deletarTurma()
-                                                setDialogDeletarOpen(false)
-                                            }} color="secondary">
-                                                Deletar
-                                            </Button>
-                                        </DialogActions>
-                                    </Dialog>
-                                    <IconButton color="inherit">
-                                        <Tooltip title="Desarquivar">
-                                            <FolderOpenIcon />
-                                        </Tooltip>
-                                    </IconButton>
-                                </CardActions>
-                            </Card>
-                        ))
-                    ) : (
-                        <Typography variant="h6">Nenhuma turma arquivada.</Typography>
+                    {turmas[0] !== undefined && (
+                        turmas[0].map((turma, index) => {
+                            return (
+                                <Card key={index} sx={{ width: 280, height: 180 }}>
+                                    <CardActionArea sx={{ backgroundColor: turma.color }} onClick={() => aluno(turma.id)} style={{ backgroundColor: colorPalette[index % colorPalette.length], color: '#fff' }}>
+                                        <CardContent>
+                                            <Typography
+                                                gutterBottom
+                                                variant="subtitle1"
+                                                component="div"
+                                                sx={{ height: 90, color: '#000000' }}
+                                            >
+                                                {turma.name}
+                                            </Typography>
+                                        </CardContent>
+                                    </CardActionArea>
+                                    <Divider />
+                                    <CardActions>
+                                        <IconButton color="inherit" onClick={() => setDialogDeletarOpen(true)}>
+                                            <Tooltip title="Deletar">
+                                                <DeleteIcon />
+                                            </Tooltip>
+                                        </IconButton>
+                                        <Dialog open={dialogDeletarOpen} onClose={() => setDialogDeletarOpen(false)}>
+                                            <DialogTitle>Confirmar Deleção</DialogTitle>
+                                            <DialogContent>
+                                                <Typography>Tem certeza de que deseja deletar {turma.name}?</Typography>
+                                            </DialogContent>
+                                            <DialogActions>
+                                                <Button onClick={() => setDialogDeletarOpen(false)} color="primary">
+                                                    Cancelar
+                                                </Button>
+                                                <Button onClick={() => {
+                                                    deletarTurma(turma.id)
+                                                    setDialogDeletarOpen(false)
+                                                }} color="secondary">
+                                                    Deletar
+                                                </Button>
+                                            </DialogActions>
+                                        </Dialog>
+                                        <IconButton color="inherit" onClick={() => desarquivarTurma(turma.id)}>
+                                            <Tooltip title="Desarquivar">
+                                                <FolderOpenIcon />
+                                            </Tooltip>
+                                        </IconButton>
+                                    </CardActions>
+                                </Card>
+                            )
+                        })
                     )}
                 </Box>
             </Box>

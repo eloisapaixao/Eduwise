@@ -31,8 +31,4 @@ public class Classroom {
 
     @Column
     private Boolean isArchived = false;
-
-    public void setArchived(Boolean isArchived) {
-        this.isArchived = isArchived;
-    }
 }

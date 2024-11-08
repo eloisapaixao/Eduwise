@@ -494,7 +494,10 @@ export function Alunos() {
                       <Button onClick={() => setDialogDeletarOpen(false)} color="primary">
                         Cancelar
                       </Button>
-                      <Button onClick={() => deletarAluno()} color="secondary">
+                      <Button onClick={() => {
+                        deletarAluno(aluno.id)
+                        setDialogDeletarOpen(false)
+                      }} color="secondary">
                         Deletar
                       </Button>
                     </DialogActions>
