@@ -111,6 +111,7 @@ export function IA() {
     const [selectedSkill, setSelectedSkill] = useState(null)
     const location = useLocation()
     const { nomeAluno, levelAluno } = location.state || {}
+    const [mensagemIA, setMensagemIA] = useState([])
 
     useEffect(() => {
         getTurmas()
@@ -189,6 +190,17 @@ export function IA() {
                 console.error('Erro ao pegar habilidades:', error);
             });
     }
+
+    const recomendar = async (skillName) => {
+        // Adiciona a skill selecionada como parâmetro na URL
+        await axios.post('http://127.0.0.1:5000/recomendar', { skill: skillName })
+            .then(function (response) {
+                setMensagemIA(response.data);  // Exibe a recomendação na interface
+            })
+            .catch(function (error) {
+                console.error('Erro ao recomendar atividade:', error);
+            })
+    }    
 
     const colorPalette = [
         '#FF4F4F',
@@ -464,6 +476,13 @@ export function IA() {
                         sx={{ width: 300, marginLeft: '58px' }}
                         disabled={!selectedSubcontent}
                         renderInput={(params) => <TextField {...params} label="Habilidades" />}
+                        onChange={(event, newValue) => {
+                            const selectedSkill = skills.find(skill => skill.name === newValue);
+                            if (selectedSkill) {
+                                // Passa a skill para o método recomendar
+                                recomendar(selectedSkill.name);
+                            }
+                        }}
                     />
                 </Grid>
                 <Grid container spacing={2} style={{ marginTop: '20px', marginLeft: '0.1px' }}>
@@ -474,7 +493,7 @@ export function IA() {
                         rows={10}
                         fullWidth
                         style={{ width: '1020px' }}
-                        defaultValue={'aaaaa'}
+                        defaultValue={mensagemIA}
                     />
                 </Grid>
             </Container>
