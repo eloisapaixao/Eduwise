@@ -34,6 +34,7 @@ import { TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom'
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
+import logo from "../../Imagens/logo.png"
 
 const drawerWidth = 240;
 
@@ -288,7 +289,7 @@ export function Alunos() {
             <MenuIcon />
           </IconButton>
 
-          <img src='/images/logo.png' alt='logo /' style={{ height: 30, }} onClick={home} />
+          <img src={logo} alt='logo /' style={{ height: 30, }} onClick={home} />
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
           <IconButton color='inherit' onClick={() => setDialogAlunoOpen(true)}>
             <Tooltip title="Adicionar Aluno">

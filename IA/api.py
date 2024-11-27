@@ -1,14 +1,21 @@
+import tensorflow as tf 
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import tensorflow as tf
 import numpy as np
 
 app = Flask(__name__)
-
 CORS(app)
 
-# Carregar o modelo
-model = tf.keras.models.load_model("modelo_recomendacao_atualizado.h5")
+MODEL_PATH = "modelo_recomendacao_atualizado.h5"
+
+# Carregar o modelo treinado
+try:
+    model = tf.keras.models.load_model(MODEL_PATH)
+    print(f"Modelo carregado com sucesso de: {MODEL_PATH}")
+except Exception as e:
+    print(f"Erro ao carregar o modelo: {e}")
+    exit(1)
+
 
 # Lista de habilidades
 habilidades = [
@@ -16,15 +23,16 @@ habilidades = [
     "Nomear as letras do alfabeto e recitá-lo na ordem das letras",
     "Conhecer diferenciar e relacionar letras em formato imprensa e cursiva maiúsculas e minúsculas",
     "Comparar palavras identificando semelhanças e diferenças entre sons de sílabas mediais e finais",
+    "Nomear as letras do alfabeto e recitá-lo na ordem das letras",
     "Identificar outros sinais no texto além de letras, como pontos finais, de interrogação e exclamação e seus efeitos na entonação",
-    "Agrupar palavras pelo critério de aproximação de significado (sinonímia) e separar palavras pelo critério de oposição de significado (antonímia)",
-    "Recitar parlendas, quadras, quadrinhas, trava-línguas, com entonação adequada e observando as rimas",
+    "Agrupar palavras pelo critério de aproximação de significado (sinonímia) e separar palavras pelo critério de oposição de signifcado (antonímia)",
+    "Recitar parlendas, quadras, quadrinhas, trava_línguas, com entonação adequada e observando as rimas",
     "Identificar elementos de uma narrativa lida ou escutada, incluindo personagens, enredo, tempo e espaço",
     "Segmentar palavras em sílabas e remover e substituir sílabas iniciais, mediais ou finais para criar novas palavras",
     "Ler e escrever corretamente palavras com marcas de nasalidade (til, m, n)",
     "Perceber o princípio acrofônico que opera nos nomes das letras do alfabeto",
     "Escrever palavras, frases, textos curtos nas formas imprensiva e cursiva",
-    "Segmentar corretamente as palavras ao escrever frases e textos",
+    "Segmentar corretamente as palavras ao escrever frases e textos", 
     "Usar adequadamente ponto final, ponto de interrogação e ponto de exclamação",
     "Formar o aumentativo e o diminutivo de palavras com os sufixos -ão e -inho/-zinho",
     "Cantar cantigas e canções, obedecendo ao ritmo e à melodia"
@@ -181,13 +189,24 @@ def habilidades_para_vetor(hab_list):
     return vetor
 
 # Função para encontrar atividades recomendadas com base nas habilidades e no modelo
-def recomendar_atividades(habilidades_aluno):
-    threshold = 0.25  # Threshold fixo
-    # Converter habilidades do aluno para vetor binário
-    vetor_habilidades = habilidades_para_vetor(habilidades_aluno).reshape(1, 1, -1)
+def recomendar_atividades(habilidades_aluno, threshold=0.20):
+    """
+    Retorna atividades recomendadas com base nas habilidades do aluno e no threshold.
+    """
+    # Converter habilidades para vetor binário
+    vetor_habilidades = habilidades_para_vetor(habilidades_aluno)
 
-    # Fazer predição
-    predicao = model.predict(vetor_habilidades)
+    # Certificar-se de que a forma do vetor é (1, 17)
+    vetor_habilidades = np.expand_dims(vetor_habilidades, axis=0)  # Adiciona uma dimensão extra
+    vetor_habilidades = np.expand_dims(vetor_habilidades, axis=1)  # Adiciona a dimensão de sequência (1)
+
+
+    # Fazer a predição
+    try:
+        predicao = model.predict(vetor_habilidades)
+    except Exception as e:
+        print(f"Erro na predição: {e}")
+        return []
 
     # Filtrar atividades recomendadas
     atividades_recomendadas = [
@@ -197,14 +216,25 @@ def recomendar_atividades(habilidades_aluno):
 
     return atividades_recomendadas
 
+
 @app.route("/recomendar", methods=["POST"])
 def recomendar():
-    """Endpoint para recomendar atividades com base nas habilidades do aluno"""
+    """
+    Endpoint para recomendar atividades com base nas habilidades do aluno.
+    """
     data = request.json
     habilidades_aluno = data.get("habilidades", [])
+    threshold = data.get("threshold", 0.20)  # Threshold padrão: 0.25
+
+    habilidade : str = habilidades_aluno[0]
+
+    if habilidade.endswith("."):
+        habilidade = habilidade[:-1]
+
+    print(habilidade)
 
     # Obter atividades recomendadas
-    atividades_recomendadas = recomendar_atividades(habilidades_aluno)
+    atividades_recomendadas = recomendar_atividades([habilidade], threshold)
 
     # Retornar a lista de atividades recomendadas
     return jsonify({"atividades_recomendadas": atividades_recomendadas})

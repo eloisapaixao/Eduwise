@@ -34,6 +34,7 @@ import CardActionArea from '@mui/material/CardActionArea';
 import FolderOpenIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useNavigate } from 'react-router-dom'
+import logo from "../../Imagens/logo.png"
 
 const drawerWidth = 240;
 
@@ -246,7 +247,7 @@ export function Arquivados() {
                     >
                         <MenuIcon />
                     </IconButton>
-                    <img src='../../Imagens/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
+                    <img src={logo} alt='logo' style={{ height: 30 }} onClick={home} />
                     <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
                     {auth && (
                         <div>

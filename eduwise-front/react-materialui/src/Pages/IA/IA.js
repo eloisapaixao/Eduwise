@@ -32,6 +32,7 @@ import { Container, Grid, Avatar } from '@mui/material'
 import './IA.css'
 import Autocomplete from '@mui/material/Autocomplete'
 import { useLocation } from 'react-router-dom'
+import logo from "../../Imagens/logo.png"
 
 const drawerWidth = 240;
 
@@ -193,14 +194,15 @@ export function IA() {
 
     const recomendar = async (skillName) => {
         // Adiciona a skill selecionada como parâmetro na URL
-        await axios.post('http://127.0.0.1:5000/recomendar', { skill: skillName })
+        await axios.post('http://127.0.0.1:5000/recomendar', { "habilidades": [skillName] })
             .then(function (response) {
-                setMensagemIA(response.data);  // Exibe a recomendação na interface
+                console.log(response);
+                setMensagemIA(JSON.stringify(response.data.atividades_recomendadas, null, 2));  // Formata a resposta como uma string JSON
             })
             .catch(function (error) {
                 console.error('Erro ao recomendar atividade:', error);
             })
-    }    
+    }
 
     const colorPalette = [
         '#FF4F4F',
@@ -285,7 +287,7 @@ export function IA() {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <img src='/images/logo.png' alt='logo' style={{ height: 30 }} onClick={home} />
+                        <img src={logo} alt='logo' style={{ height: 30 }} onClick={home} />
                         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} />
                         {auth && (
                             <div>
@@ -493,8 +495,12 @@ export function IA() {
                         rows={10}
                         fullWidth
                         style={{ width: '1020px' }}
-                        defaultValue={mensagemIA}
+                        value={mensagemIA} // Troca de defaultValue para value
+                        InputProps={{
+                            readOnly: true, // Para evitar edição manual
+                        }}
                     />
+
                 </Grid>
             </Container>
         </div>
