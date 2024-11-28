@@ -178,17 +178,17 @@ export function Turmas() {
     }
 
     const adicionarTurma = async () => {
-        const emailProfessor = localStorage.getItem("email")
-        let idProfessor
-        /////
+        const emailProfessor = localStorage.getItem("email");
+        let idProfessor;
         await axios.get('http://localhost:8080/teachers/getByEmail/' + emailProfessor)
             .then(function (response) {
-                idProfessor = response.data.id
+                idProfessor = response.data.id;
+                console.log(idProfessor);  // Verifique se o ID está correto
             })
             .catch(function (error) {
-                console.log(error)
-            })
-        ////
+                console.log('Erro ao obter ID do professor:', error);
+            });
+    
         const novaTurma = {
             name: nome,
             level: parseInt(serie),
@@ -200,13 +200,13 @@ export function Turmas() {
                 setNome('')
                 setSerie('')
                 setDialogOpen(false)
-
                 window.location.reload()
             })
             .catch(error => {
                 console.error('Erro ao adicionar turma:', error)
             })
     }
+    
 
     const deletarTurma = async (classroom) => {
         try {

@@ -31,7 +31,7 @@ export function Cadastrar() {
         })
         .then(function (response) {
             console.log(response)
-            navigate("/turmas")
+            navigate("/login")
         })
         .catch(function (error) {
             console.log(error)
