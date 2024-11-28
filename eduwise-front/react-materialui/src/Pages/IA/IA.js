@@ -193,16 +193,26 @@ export function IA() {
     }
 
     const recomendar = async (skillName) => {
-        // Adiciona a skill selecionada como parâmetro na URL
-        await axios.post('http://127.0.0.1:5000/recomendar', { "habilidades": [skillName] })
-            .then(function (response) {
-                console.log(response);
-                setMensagemIA(JSON.stringify(response.data.atividades_recomendadas, null, 2));  // Formata a resposta como uma string JSON
-            })
-            .catch(function (error) {
-                console.error('Erro ao recomendar atividade:', error);
-            })
-    }
+        try {
+            const response = await axios.post('http://127.0.0.1:5000/recomendar', { "habilidades": [skillName] });
+    
+            if (response.data.atividades_recomendadas.length === 0) {
+                setMensagemIA("Não existem atividades para reforçar essa habilidade.");
+            } else {
+                const atividadesFormatadas = response.data.atividades_recomendadas.map(atividade => (
+                    `Número da atividade: ${atividade.id}\n` +
+                    `Descrição: ${atividade.descricao}\n` +
+                    `Habilidades envolvidas:\n  - ${atividade.habilidades_relacionadas.join('\n  - ')}\n`
+                )).join('\n\n'); // Junta todas as atividades com espaçamento entre elas
+                setMensagemIA(atividadesFormatadas);
+            }
+        } catch (error) {
+            console.error('Erro ao recomendar atividade:', error);
+            setMensagemIA("Ocorreu um erro ao buscar as recomendações. Tente novamente mais tarde.");
+        }
+    };
+    
+    
 
     const colorPalette = [
         '#FF4F4F',
