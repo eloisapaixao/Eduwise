@@ -8,6 +8,7 @@ import Stack from '@mui/material/Stack'
 import ButtonGroup from '@mui/material/ButtonGroup'
 import { Checkbox, FormControlLabel } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
+import { Snackbar, Alert } from '@mui/material'
 
 export function Cadastrar() {
 
@@ -18,7 +19,34 @@ export function Cadastrar() {
 
     const navigate = useNavigate()
 
+    const [openSnackbar, setOpenSnackbar] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+
     const registrar = () => {
+        if(nome.length <= 0) {
+            setErrorMessage("Preencha todos os campos antes de cadastrar!")
+            setOpenSnackbar(true);
+            return;
+        }
+
+        if (email.length <= 0) {
+            setErrorMessage("Preencha todos os campos antes de cadastrar!")
+            setOpenSnackbar(true);
+            return;
+        }
+        
+        if (senha.length <= 0) {
+            setErrorMessage("Preencha todos os campos antes de cadastrar!");
+            setOpenSnackbar(true);
+            return;
+        }
+
+        if (escola.length <= 0) {
+            setErrorMessage("Preencha todos os campos antes de cadastrar!");
+            setOpenSnackbar(true);
+            return;
+        }
+
         axios.post('http://localhost:8080/teachers', {
             email: email,
             password: senha,
@@ -131,6 +159,16 @@ export function Cadastrar() {
                     </Box>
                 </Box>
             </Container>
+            <Snackbar 
+                open={openSnackbar} 
+                autoHideDuration={6000} 
+                onClose={() => setOpenSnackbar(false)}
+                anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            >
+                <Alert onClose={() => setOpenSnackbar(false)} severity="error" sx={{ width: '100%' }}>
+                    {errorMessage}
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

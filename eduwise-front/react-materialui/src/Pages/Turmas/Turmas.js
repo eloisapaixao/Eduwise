@@ -353,7 +353,6 @@ export function Turmas() {
                                 open={Boolean(anchorEl)}
                                 onClose={handleClose}
                             >
-                                <MenuItem>Profile</MenuItem>
                                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
                             </Menu>
                         </div>
@@ -457,7 +456,7 @@ export function Turmas() {
                                                 gutterBottom
                                                 variant="subtitle1"
                                                 component="div"
-                                                sx={{ height: 90, color: '#000000' }}
+                                                sx={{ height: 90, color: '#FFFFFF' }}
                                             >
                                                 {turma.name}
                                             </Typography>
@@ -502,3 +501,4 @@ export function Turmas() {
         </Box>
     );
 }
+

@@ -25,6 +25,17 @@ export function Login({ setLoggedInTeacherId }) {
     }
 
     const logar = () => {
+        if (email.length <= 0) {
+            setErrorMessage("Preencha todos os campos antes de logar!")
+            setOpenSnackbar(true);
+            return;
+        }
+        
+        if (senha.length <= 0) {
+            setErrorMessage("Preencha todos os campos antes de logar!");
+            setOpenSnackbar(true);
+            return;
+        }
         axios.get('http://localhost:8080/teachers')
         .then(function (response) {
             response.data.forEach(
